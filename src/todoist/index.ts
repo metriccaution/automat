@@ -1,5 +1,6 @@
+import { Logger } from "pino";
 import { RecipeDestination } from "../types";
-import { createApi } from "./api";
+import { createApi, TodoistApi } from "./api";
 import { countDaysWithFood, saveRecipes } from "./utils";
 
 export interface TodoistConfig {
@@ -8,6 +9,7 @@ export interface TodoistConfig {
     cooking: string;
     shopping: string;
   };
+  logger: Logger;
 }
 
 /**
@@ -17,9 +19,25 @@ export default function todoistDestination(
   config: TodoistConfig
 ): RecipeDestination {
   const { apiKey, projects } = config;
-  const api = createApi({
+
+  const baseApi = createApi({
     apiKey
   });
+
+  const api: TodoistApi = {
+    createTask: async (...args) => {
+      config.logger.debug("Creating task");
+      return baseApi.createTask(...args);
+    },
+    getTasks: async (...args) => {
+      config.logger.debug("Getting tasks");
+      return baseApi.getTasks(...args);
+    },
+    listProjects: async (...args) => {
+      config.logger.debug("Listing projects");
+      return baseApi.listProjects(...args);
+    }
+  };
 
   const dest: RecipeDestination = {
     countDaysWithFood: async (start: Date, end: Date) =>

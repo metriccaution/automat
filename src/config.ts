@@ -30,6 +30,15 @@ export const config = convict({
     doc: "A file on disk to specify more config",
     env: "CONFIG_FILE"
   },
+  logger: {
+    level: {
+      arg: "log-level",
+      default: "info",
+      doc: "The level of the logger",
+      env: "LOG_LEVEL",
+      format: ["info", "debug"]
+    }
+  },
   recipeChoice: {
     days: {
       arg: "days",

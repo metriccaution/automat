@@ -19,11 +19,18 @@ export { AirtableConfig } from "./types";
 export async function getRecipes(
   config: AirtableConfig
 ): Promise<RecipeDefinition[]> {
+  config.logger.debug("Requesting recipes");
   const rows: AirtableRow[] = await getTable({
     ...config,
     fields: ["Name", "Meals", "Source", "Ingredients"],
     view: "Grid view"
   });
+  config.logger.debug(
+    {
+      recipeCount: rows.length
+    },
+    "Got recipes"
+  );
 
   return rows.map(
     (r): RecipeDefinition => {
