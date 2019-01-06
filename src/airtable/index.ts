@@ -32,7 +32,7 @@ export async function getRecipes(
     "Got recipes"
   );
 
-  return rows.map(
+  const recipes = rows.map(
     (r): RecipeDefinition => {
       return {
         ingredients: splitIngredients(r.Ingredients),
@@ -42,4 +42,8 @@ export async function getRecipes(
       };
     }
   );
+
+  config.logger.debug("Parsed recipes");
+
+  return recipes;
 }

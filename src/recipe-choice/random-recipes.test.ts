@@ -49,4 +49,9 @@ describe("Random item choice", () => {
   it("doesn't fail when picking no items", () => {
     expect(chooseAtRandom(0, [stubRecipe(1)])).toEqual([]);
   });
+
+  it("doesn't run into an infinite loop when there's nothing with length one", () => {
+    const r1 = stubRecipe(4);
+    expect(chooseAtRandom(2, [r1])).toEqual([r1]);
+  });
 });

@@ -11,7 +11,7 @@ export default function chooseAtRandom(
   let daysPicked = 0;
   const chosen: RecipeDefinition[] = [];
 
-  while (chosen.length < days) {
+  while (days > daysPicked) {
     const pickFrom = arrayShuffle(recipes.slice());
     while (days > daysPicked && pickFrom.length) {
       const recipe = pickFrom.splice(0, 1)[0];

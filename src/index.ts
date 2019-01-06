@@ -27,16 +27,17 @@ import todoistApi from "./todoist";
   const alreadyChosen = await todoist.countDaysWithFood(today, end);
   const howManyDays = daysToPick - alreadyChosen;
 
-  logger.info(
-    `Picking food for ${howManyDays} days (${alreadyChosen} had meals planned already)`
-  );
-
+  logger.info("Pulling in recipes");
   const recipes = await getRecipes({
     ...appConfig.airtable,
     logger: logger.child({
       api: "airtable"
     })
   });
+
+  logger.info(
+    `Picking food for ${howManyDays} days (${alreadyChosen} had meals planned already)`
+  );
   const chosenRecipes = pickFood(howManyDays, recipes);
 
   logger.info(
