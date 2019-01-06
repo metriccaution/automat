@@ -1,0 +1,19 @@
+{
+  "defaultSeverity": "error",
+  "extends": ["tslint:recommended", "tslint-config-prettier"],
+  "jsRules": {},
+  "rules": {
+    "await-promise": true,
+    "cyclomatic-complexity": 20,
+    "interface-name": [true, "never-prefix"],
+    "no-console": false,
+    "no-floating-promises": true,
+    "no-inferrable-types": true,
+    "no-return-await": true,
+    "no-string-throw": true,
+    "no-unnecessary-type-assertion": true,
+    "prefer-const": true,
+    "promise-function-async": true
+  },
+  "rulesDirectory": []
+}
