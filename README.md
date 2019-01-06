@@ -53,7 +53,7 @@ There are a number of ways to configure Automat (based off [Convict](https://git
 | Airtable table name      | no       | Recipes         | `AIRTABLE_TABLE`     | `airtable-table`   | `airtable.tableName`        |
 | Todoist API key          | yes      | N\A             | `TODOIST_KEY`        | `todoist-key`      | `todoist.apiKey`            |
 | Todoist cooking project  | no       | Cooking         | `COOKING_PROJECT`    | `cooking-project`  | `todoist.projects.cooking`  |
-| Todoist shopping project | no       | Cooking         | `SHOPPING_PROJECT`   | `shopping-project` | `todoist.projects.shopping` |
+| Todoist shopping project | no       | Groceries         | `SHOPPING_PROJECT`   | `shopping-project` | `todoist.projects.shopping` |
 | Days to pick food for    | no       | 10              | `AUTOMAT_DAYS`       | `days`             | `recipeChoice.days`         |
 
 ### Example config JSON file
