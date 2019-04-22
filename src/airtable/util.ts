@@ -83,3 +83,14 @@ export function parseToAirtableRow(recipe: RecipeDefinition): AirtableRow {
     id: recipe.id
   };
 }
+
+export function oldestAirtableDate(recipes: AirtableRow[]): Date {
+  return recipes
+    .map(r => r["Last cooked"] || "")
+    .filter(Boolean)
+    .map(parseDate)
+    .reduce(
+      (oldest, date) => (oldest.getTime() > date.getTime() ? date : oldest),
+      new Date()
+    );
+}

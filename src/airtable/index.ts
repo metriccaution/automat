@@ -1,7 +1,11 @@
 import { RecipeDefinition } from "../types";
 import { getTable, updateRecord } from "./api";
 import { AirtableConfig, AirtableRow } from "./types";
-import { parseAirtableRow, parseToAirtableRow } from "./util";
+import {
+  oldestAirtableDate,
+  parseAirtableRow,
+  parseToAirtableRow
+} from "./util";
 
 export { AirtableConfig } from "./types";
 
@@ -18,14 +22,16 @@ export async function getRecipes(
     view: "Grid view"
   });
 
-  config.logger.debug(
+  const oldestDatePresent = oldestAirtableDate(rows);
+  config.logger.info(
     {
+      oldestDatePresent,
       recipeCount: rows.length
     },
     "Got recipes"
   );
 
-  const recipes = rows.map(parseAirtableRow.bind(null, new Date()));
+  const recipes = rows.map(parseAirtableRow.bind(null, oldestDatePresent));
 
   config.logger.debug("Parsed recipes");
 
