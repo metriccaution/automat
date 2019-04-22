@@ -244,6 +244,7 @@ describe("Creating tasks", () => {
       },
       recipes: [
         {
+          id: "1",
           ingredients: [
             {
               name: "c",
@@ -260,6 +261,7 @@ describe("Creating tasks", () => {
           source: "Book 1"
         },
         {
+          id: "2",
           ingredients: [
             {
               name: "e",

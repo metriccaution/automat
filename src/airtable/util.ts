@@ -47,6 +47,7 @@ export function parseAirtableRow(
     : fallbackDate;
 
   return {
+    id: r.id,
     ingredients: splitIngredients(r.Ingredients),
     lastCooked,
     meals: r.Meals,

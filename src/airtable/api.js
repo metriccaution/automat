@@ -20,5 +20,5 @@ async function getTable({ apiKey, baseId, tableName, view, fields }) {
     .select({ view, fields })
     .all();
 
-  return allRecipes.map(f => f.fields);
+  return allRecipes.map(f => Object.assign({}, f.fields, { id: f.id }));
 }

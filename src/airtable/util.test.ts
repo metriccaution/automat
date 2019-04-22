@@ -52,9 +52,11 @@ describe("Recipe parsing", () => {
         Ingredients: "a\nb",
         Meals: 3,
         Name: "Food",
-        Source: "A book"
+        Source: "A book",
+        id: "1"
       })
     ).toEqual({
+      id: "1",
       ingredients: [
         {
           name: "a",
@@ -79,9 +81,11 @@ describe("Recipe parsing", () => {
         "Last cooked": "2018-01-01",
         Meals: 3,
         Name: "Food",
-        Source: "A book"
+        Source: "A book",
+        id: "1"
       })
     ).toEqual({
+      id: "1",
       ingredients: [
         {
           name: "a",
@@ -108,7 +112,8 @@ describe("Recipe parsing", () => {
         "Last cooked": "2018-01-01-02",
         Meals: 3,
         Name: "Food",
-        Source: "A book"
+        Source: "A book",
+        id: "1"
       })
     ).toThrow();
 
@@ -118,7 +123,8 @@ describe("Recipe parsing", () => {
         "Last cooked": "2018-01",
         Meals: 3,
         Name: "Food",
-        Source: "A book"
+        Source: "A book",
+        id: "1"
       })
     ).toThrow();
 
@@ -128,7 +134,8 @@ describe("Recipe parsing", () => {
         "Last cooked": "2018-0a-01",
         Meals: 3,
         Name: "Food",
-        Source: "A book"
+        Source: "A book",
+        id: "1"
       })
     ).toThrow();
   });
