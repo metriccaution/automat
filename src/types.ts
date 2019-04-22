@@ -2,10 +2,12 @@
  * The core recipe type
  */
 export interface RecipeDefinition {
+  id: string;
   name: string;
   meals: number;
   source: string;
   ingredients: IngredientDefinition[];
+  lastCooked: Date;
 }
 
 /**

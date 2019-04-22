@@ -1,15 +1,11 @@
 import { RecipeDefinition } from "../types";
-import { getTable } from "./api";
-import { AirtableConfig } from "./types";
-import { splitIngredients } from "./util";
-
-interface AirtableRow {
-  Name: string;
-  Meals: number;
-  Ingredients: string;
-  Source: string;
-  "Last cooked"?: string;
-}
+import { getTable, updateRecord } from "./api";
+import { AirtableConfig, AirtableRow } from "./types";
+import {
+  oldestAirtableDate,
+  parseAirtableRow,
+  parseToAirtableRow
+} from "./util";
 
 export { AirtableConfig } from "./types";
 
@@ -22,28 +18,36 @@ export async function getRecipes(
   config.logger.debug("Requesting recipes");
   const rows: AirtableRow[] = await getTable({
     ...config,
-    fields: ["Name", "Meals", "Source", "Ingredients"],
+    fields: ["Name", "Meals", "Source", "Ingredients", "Last cooked"],
     view: "Grid view"
   });
-  config.logger.debug(
+
+  const oldestDatePresent = oldestAirtableDate(rows);
+  config.logger.info(
     {
+      oldestDatePresent,
       recipeCount: rows.length
     },
     "Got recipes"
   );
 
-  const recipes = rows.map(
-    (r): RecipeDefinition => {
-      return {
-        ingredients: splitIngredients(r.Ingredients),
-        meals: r.Meals,
-        name: r.Name,
-        source: r.Source
-      };
-    }
-  );
+  const recipes = rows.map(parseAirtableRow.bind(null, oldestDatePresent));
 
   config.logger.debug("Parsed recipes");
 
   return recipes;
+}
+
+export async function updateRecipe(
+  config: AirtableConfig,
+  newRecord: RecipeDefinition
+) {
+  await updateRecord({
+    ...config,
+    id: newRecord.id,
+    newRecord: {
+      ...parseToAirtableRow(newRecord),
+      id: undefined
+    }
+  });
 }

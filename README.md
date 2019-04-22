@@ -22,6 +22,7 @@ The table should have the columns:
 | Meals       | Number | The number of days food the recipe will make | Used both for choosing how many recipes to choose for a time, and for how many cooking tasks to create |
 | Ingredients | Text   | A new-line delimited list of ingredients     | Populates the shopping list                                                                            |
 | Source      | Text   | Where the recipe is from                     | Forms part of the cooking task name                                                                    |
+| Last cooked | Date   | The last time this recipe was chosen         | Recipes are more likely to be chosen when they haven't been cooked recently                            |
 
 ### Set up Todoist
 

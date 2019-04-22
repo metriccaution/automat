@@ -1,5 +1,5 @@
 import * as pino from "pino";
-import { getRecipes } from "./airtable";
+import { getRecipes, updateRecipe } from "./airtable";
 import { config } from "./config";
 import pickFood from "./recipe-choice/random-recipes";
 import todoistApi from "./todoist";
@@ -44,6 +44,24 @@ import todoistApi from "./todoist";
     `Picked ${chosenRecipes.map(r => r.name).join(", ") || "nothing"}`
   );
 
+  logger.info("Setting up tasks");
   await todoist.saveRecipes(today, chosenRecipes);
+
+  logger.info("Updating chosen recipes");
+  for (const recipe of chosenRecipes) {
+    await updateRecipe(
+      {
+        ...appConfig.airtable,
+        logger: logger.child({
+          api: "airtable"
+        })
+      },
+      {
+        ...recipe,
+        lastCooked: new Date()
+      }
+    );
+  }
+
   logger.info("Done");
 })().catch((e: Error) => console.log("Failed to run", e));
