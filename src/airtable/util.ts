@@ -1,3 +1,4 @@
+import { padStart } from "lodash";
 import { IngredientDefinition, RecipeDefinition } from "../types";
 import { AirtableRow } from "./types";
 
@@ -53,5 +54,32 @@ export function parseAirtableRow(
     meals: r.Meals,
     name: r.Name,
     source: r.Source
+  };
+}
+
+export function parseToAirtableRow(recipe: RecipeDefinition): AirtableRow {
+  const lastCooked = `${padStart(
+    "" + recipe.lastCooked.getUTCFullYear(),
+    4,
+    "0"
+  )}-${padStart("" + (recipe.lastCooked.getUTCMonth() + 1), 2, "0")}-${padStart(
+    "" + recipe.lastCooked.getUTCDate(),
+    2,
+    "0"
+  )}`;
+
+  const ingredients = recipe.ingredients
+    .map(i => `${i.name} ${i.quantity === "1" ? "" : "- " + i.quantity}`)
+    .map(l => l.trim())
+    .join("\n")
+    .trim();
+
+  return {
+    Ingredients: ingredients,
+    "Last cooked": lastCooked,
+    Meals: recipe.meals,
+    Name: recipe.name,
+    Source: recipe.source,
+    id: recipe.id
   };
 }

@@ -18,3 +18,13 @@ export interface TableFetchConfig<T> {
  * Get the contents of the recipes table
  */
 declare function getTable<T>(config: TableFetchConfig<T>): Promise<T[]>;
+
+export interface RecordUpdateConfig<T> {
+  apiKey: string;
+  baseId: string;
+  id: string;
+  newRecord: T;
+  tableName: string;
+}
+
+declare function updateRecord<T>(config: RecordUpdateConfig<T>): Promise<void>;

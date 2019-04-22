@@ -1,4 +1,5 @@
-import { parseAirtableRow, splitIngredients } from "./util";
+import { AirtableRow } from "./types";
+import { parseAirtableRow, parseToAirtableRow, splitIngredients } from "./util";
 
 describe("Splitting ingredients out", () => {
   test("Basic ingredient splitting", () => {
@@ -138,5 +139,40 @@ describe("Recipe parsing", () => {
         id: "1"
       })
     ).toThrow();
+  });
+});
+
+describe("Round-trip recipe conversion", () => {
+  test("All fields present", () => {
+    const source: AirtableRow = {
+      Ingredients: "ABC\nDEF - 3",
+      "Last cooked": "2019-01-02",
+      Meals: 3,
+      Name: "Some food",
+      Source: "A book",
+      id: "1"
+    };
+
+    const roundTrip = parseToAirtableRow(parseAirtableRow(new Date(), source));
+    expect(roundTrip).toEqual(source);
+  });
+
+  test("Defaults filled in during parsing", () => {
+    const source: AirtableRow = {
+      Ingredients: "ABC\nDEF - 3",
+      Meals: 3,
+      Name: "Some food",
+      Source: "A book",
+      id: "1"
+    };
+
+    const defaultDate = new Date("2019-04-22T13:38:13.786Z");
+
+    const roundTrip = parseToAirtableRow(parseAirtableRow(defaultDate, source));
+    expect(roundTrip).toEqual({
+      ...source,
+      Ingredients: "ABC\nDEF - 3",
+      "Last cooked": "2019-04-22"
+    });
   });
 });

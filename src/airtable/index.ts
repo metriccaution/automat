@@ -1,7 +1,7 @@
 import { RecipeDefinition } from "../types";
-import { getTable } from "./api";
+import { getTable, updateRecord } from "./api";
 import { AirtableConfig, AirtableRow } from "./types";
-import { parseAirtableRow } from "./util";
+import { parseAirtableRow, parseToAirtableRow } from "./util";
 
 export { AirtableConfig } from "./types";
 
@@ -30,4 +30,18 @@ export async function getRecipes(
   config.logger.debug("Parsed recipes");
 
   return recipes;
+}
+
+export async function updateRecipe(
+  config: AirtableConfig,
+  newRecord: RecipeDefinition
+) {
+  await updateRecord({
+    ...config,
+    id: newRecord.id,
+    newRecord: {
+      ...parseToAirtableRow(newRecord),
+      id: undefined
+    }
+  });
 }
