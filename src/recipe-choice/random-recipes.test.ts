@@ -23,6 +23,7 @@ describe("Array shuffling", () => {
 describe("Random item choice", () => {
   const stubRecipe = (days: number) => ({
     ingredients: [],
+    lastCooked: new Date(Math.floor(Math.random() * Date.now())),
     meals: days,
     name: `${Math.random()}`,
     source: `${Math.random()}`

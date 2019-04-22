@@ -6,6 +6,7 @@ export interface RecipeDefinition {
   meals: number;
   source: string;
   ingredients: IngredientDefinition[];
+  lastCooked: Date;
 }
 
 /**

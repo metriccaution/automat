@@ -254,6 +254,7 @@ describe("Creating tasks", () => {
               quantity: "b"
             }
           ],
+          lastCooked: new Date("2019-04-22T13:38:13.786Z"),
           meals: 2,
           name: "Recipe 1",
           source: "Book 1"
@@ -265,6 +266,7 @@ describe("Creating tasks", () => {
               quantity: "f"
             }
           ],
+          lastCooked: new Date("2019-04-22T13:38:13.786Z"),
           meals: 3,
           name: "Recipe 2",
           source: "Book 2"

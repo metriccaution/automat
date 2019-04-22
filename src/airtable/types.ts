@@ -9,3 +9,14 @@ export interface AirtableConfig {
   tableName: string;
   logger: Logger;
 }
+
+/**
+ * The data that Airtable throws back to us.
+ */
+export interface AirtableRow {
+  Name: string;
+  Meals: number;
+  Ingredients: string;
+  Source: string;
+  "Last cooked"?: string;
+}
