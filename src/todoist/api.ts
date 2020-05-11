@@ -58,7 +58,7 @@ export interface TodoistApi {
 
 export function createApi(config: TodoistConfig): TodoistApi {
   const client = axios.create({
-    baseURL: "https://beta.todoist.com/API/v8",
+    baseURL: "https://api.todoist.com/rest/v1",
     headers: { Authorization: `Bearer ${config.apiKey}` }
   });
 

@@ -42,7 +42,7 @@ export const config = convict({
   recipeChoice: {
     days: {
       arg: "days",
-      default: 10,
+      default: 5,
       doc: "How many days to pick food for",
       env: "AUTOMAT_DAYS"
     }
