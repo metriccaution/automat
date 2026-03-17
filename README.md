@@ -10,7 +10,7 @@ To use Automat, you'll first need to run set up the external services, and then,
 
 This should be pretty simple:
 
-- Grab the API token (https://todoist.com/prefs/integrations)
+- Grab the [API token](https://app.todoist.com/app/settings/integrations/developer)
 
 ### Building the Code
 
