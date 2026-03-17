@@ -13,9 +13,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Migrated to Bun
+
 ### Deprecated
 
 ### Removed
+
+- Migrated from Airtable to a local file (not currently included)
+- Custom Todiost client
 
 ### Fixed
 

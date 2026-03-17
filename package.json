@@ -1,48 +1,21 @@
 {
-  "name": "automat-airtable",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "automat",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
   "scripts": {
-    "start": "node dist | pino-pretty",
-    "test": "npm run lint && npm run compile && npm run unit-test && npm run format",
-    "format": "prettier --write 'src/**/*' '*.{json,md}'",
-    "compile": "tsc",
-    "lint": "tslint -p . --fix",
-    "unit-test": "jest",
-    "format-watch": "onchange 'src/**/*' '*.{json,md,js}' --  prettier --write {{changed}}"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "MIT",
-  "dependencies": {
-    "@types/convict": "^4.2.1",
-    "@types/lodash": "^4.14.150",
-    "@types/node": "^10.17.21",
-    "@types/pino": "^5.20.0",
-    "airtable": "^0.8.1",
-    "axios": "^0.21.2",
-    "convict": "^6.2.3",
-    "lodash": "^4.17.21",
-    "p-map": "^2.0.0",
-    "p-retry": "^4.2.0",
-    "pino": "^5.17.0",
-    "pino-pretty": "^3.6.1"
+    "plan": "bun run index.ts",
+    "test": "prettier --write --log-level=warn . && bun test"
   },
   "devDependencies": {
-    "@types/jest": "^24.9.1",
-    "husky": "^2.7.0",
-    "jest": "^24.9.0",
-    "onchange": "^6.1.1",
-    "prettier": "^1.19.1",
-    "ts-jest": "^25.5.1",
-    "tslint": "^5.20.1",
-    "tslint-config-prettier": "^1.17.0",
-    "typescript": "^3.8.3"
+    "@types/bun": "latest",
+    "prettier": "^3.8.1"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm test"
-    }
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@doist/todoist-api-typescript": "^7.1.0",
+    "zod": "^4.3.6"
   }
 }
