@@ -1,7 +1,5 @@
-import { describe, expect, test } from "bun:test";
+import { expect, test } from "bun:test";
 import { normaliseUnits } from "./normalise-units.ts";
-
-// import { assertEquals } from "https://deno.land/std@0.177.0/testing/asserts.ts";
 
 test("normaliseUnits should return just the number back when there's a numbered single item", () => {
   expect(normaliseUnits("singles", "1")).toBe("1");

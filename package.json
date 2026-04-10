@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "plan": "bun run index.ts",
-    "test": "prettier --write --log-level=warn . && bun test"
+    "test": "prettier --write --log-level=warn . && tsc && bun test"
   },
   "devDependencies": {
     "@types/bun": "latest",
