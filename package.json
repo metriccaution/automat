@@ -15,7 +15,7 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "@doist/todoist-api-typescript": "^7.1.0",
+    "@doist/todoist-api-typescript": "^7.10.0",
     "zod": "^4.3.6"
   }
 }
