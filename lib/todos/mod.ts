@@ -8,10 +8,23 @@ const mealsProject = "Cooking";
 const groceriesProject = "Groceries";
 const automatLabel = "Automat";
 
+async function* tasksForQuery(
+  api: TodoistApi,
+  query: string,
+): AsyncGenerator<Task> {
+  let cursor = null;
+  do {
+    const hits = await api.getTasksByFilter({ query });
+    cursor = hits.nextCursor;
+
+    for (const task of hits.results) {
+      yield task;
+    }
+  } while (cursor !== null);
+}
+
 async function deleteByQuery(api: TodoistApi, query: string) {
-  // TODO - Paging
-  const hits = await api.getTasksByFilter({ query });
-  for (const task of hits.results) {
+  for await (const task of tasksForQuery(api, query)) {
     await api.closeTask(task.id);
   }
 }
@@ -28,29 +41,39 @@ export async function cleanupCooking(apiKey: string): Promise<void> {
   );
 }
 
-async function mealTasks(apiKey: string): Promise<Task[]> {
-  // TODO - Technically have to care about days out the right of the planning window
-  const cookingTasks = await new TodoistApi(apiKey).getTasksByFilter({
-    query: toFilter(
-      and(project(mealsProject), or(dueOn("Today"), dueAfter("Today"))),
-    ),
-  });
+export function dueDate(task: Pick<Task, "due">): Date | undefined {
+  const due = task.due;
+  if (!due) {
+    return undefined;
+  }
 
-  return cookingTasks.results;
+  const parsed = new Date(due.date);
+  if (Number.isNaN(parsed.getTime())) {
+    return undefined;
+  }
+
+  return parsed;
 }
 
 /**
  * What days of cooking are already planned out.
  */
 export async function listPlannedDays(apiKey: string): Promise<Date[]> {
-  const cookingTasks = await mealTasks(apiKey);
-  const dueStrings: string[] = cookingTasks
-    .map((task) => task.due)
-    .filter((due): due is NonNullable<Task["due"]> => Boolean(due))
-    .map((due) => due.date);
+  const dates: Date[] = [];
 
-  // // TODO - This probably wants some checking...
-  return dueStrings.map((d) => new Date(d));
+  const apiClient = await new TodoistApi(apiKey);
+  const query = toFilter(
+    and(project(mealsProject), or(dueOn("Today"), dueAfter("Today"))),
+  );
+
+  for await (const task of tasksForQuery(apiClient, query)) {
+    const taskDue = dueDate(task);
+    if (taskDue) {
+      dates.push(taskDue);
+    }
+  }
+
+  return dates;
 }
 
 /**
