@@ -77,7 +77,7 @@ export async function listPlannedDays(apiKey: string): Promise<Date[]> {
 }
 
 /**
- * Save new recipies into Todoist.
+ * Save new recipes into Todoist.
  */
 export async function saveMealPlan(
   apiKey: string,

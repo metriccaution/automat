@@ -1,4 +1,4 @@
-import { saveMealPlan } from "../todos/mod.ts";
+import { saveMealPlan } from "../todos/index.ts";
 import { loadData, type RecipeIngredient } from "../data/mod.ts";
 
 export interface Config {
