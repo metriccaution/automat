@@ -1,5 +1,9 @@
 import { loadFullMeals, mealIngredients } from "../recipes/mod.ts";
-import { cleanupCooking, listPlannedDays, saveMealPlan } from "../todos/mod.ts";
+import {
+  cleanupCooking,
+  listPlannedDays,
+  saveMealPlan,
+} from "../todos/index.ts";
 import {
   chooseAtRandom,
   mealDates,

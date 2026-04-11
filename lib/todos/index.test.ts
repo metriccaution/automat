@@ -1,4 +1,4 @@
-import { dueDate } from "./mod";
+import { dueDate } from ".";
 import { describe, expect, test } from "bun:test";
 
 describe("dueDate", () => {
