@@ -1,4 +1,4 @@
-import type { RecipeIngredient } from "../data/mod.ts";
+import type { RecipeIngredient } from "../data/index.ts";
 
 const unplanned = ["Water", "Salt", "Black Pepper"];
 

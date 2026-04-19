@@ -1,5 +1,6 @@
 import { saveMealPlan } from "../todos/index.ts";
-import { loadData, type RecipeIngredient } from "../data/mod.ts";
+import { loadData, type RecipeIngredient } from "../data/index.ts";
+import { TodoistApi } from "@doist/todoist-api-typescript";
 
 export interface Config {
   /**
@@ -58,5 +59,5 @@ export async function addSingles({ dataFile, todoistToken, recipes }: Config) {
     .filter((i): i is RecipeIngredient => Boolean(i.ingredient))
     .sort((a, b) => a.ingredient.localeCompare(b.ingredient));
 
-  await saveMealPlan(todoistToken, ingredientsToPlan, []);
+  await saveMealPlan(new TodoistApi(todoistToken), ingredientsToPlan, []);
 }

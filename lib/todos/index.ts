@@ -1,5 +1,5 @@
 import { TodoistApi, type Task } from "@doist/todoist-api-typescript";
-import type { RecipeIngredient } from "../data/recipe/mod.ts";
+import type { RecipeIngredient } from "../data/index.ts";
 import { filters, toFilter } from "./filters.ts";
 
 const { and, dueBefore, dueOn, or, project, dueAfter, withLabel } = filters;
@@ -14,7 +14,7 @@ async function* tasksForQuery(
 ): AsyncGenerator<Task> {
   let cursor = null;
   do {
-    const hits = await api.getTasksByFilter({ query });
+    const hits = await api.getTasksByFilter({ cursor, query });
     cursor = hits.nextCursor;
 
     for (const task of hits.results) {
@@ -32,9 +32,9 @@ async function deleteByQuery(api: TodoistApi, query: string) {
 /**
  * Clear up any cooking tasks in the past
  */
-export async function cleanupCooking(apiKey: string): Promise<void> {
+export async function cleanupCooking(api: TodoistApi): Promise<void> {
   await deleteByQuery(
-    new TodoistApi(apiKey),
+    api,
     toFilter(
       and(project(mealsProject), dueBefore("Today"), withLabel(automatLabel)),
     ),
@@ -58,10 +58,9 @@ export function dueDate(task: Pick<Task, "due">): Date | undefined {
 /**
  * What days of cooking are already planned out.
  */
-export async function listPlannedDays(apiKey: string): Promise<Date[]> {
+export async function listPlannedDays(apiClient: TodoistApi): Promise<Date[]> {
   const dates: Date[] = [];
 
-  const apiClient = await new TodoistApi(apiKey);
   const query = toFilter(
     and(project(mealsProject), or(dueOn("Today"), dueAfter("Today"))),
   );
@@ -80,15 +79,14 @@ export async function listPlannedDays(apiKey: string): Promise<Date[]> {
  * Save new recipes into Todoist.
  */
 export async function saveMealPlan(
-  apiKey: string,
+  client: TodoistApi,
   ingredients: RecipeIngredient[],
   meals: Array<{ title: string; date: Date }>,
 ): Promise<void> {
-  const client = new TodoistApi(apiKey);
   const [label, groceriesProjectId, mealsProjectId] = await Promise.all([
-    ensureLabel(apiKey, automatLabel),
-    ensureProject(apiKey, groceriesProject),
-    ensureProject(apiKey, mealsProject),
+    ensureLabel(client, automatLabel),
+    ensureProject(client, groceriesProject),
+    ensureProject(client, mealsProject),
   ]);
 
   const sortedIngredients = ingredients
@@ -118,8 +116,7 @@ export async function saveMealPlan(
 /**
  * Make sure there's a label present with a particular name, and get its ID.
  */
-async function ensureLabel(apiKey: string, label: string): Promise<string> {
-  const client = new TodoistApi(apiKey);
+async function ensureLabel(client: TodoistApi, label: string): Promise<string> {
   const labels = (await client.getLabels()).results;
   const match = labels.find((l) => l.name === label);
   if (match) {
@@ -136,8 +133,10 @@ async function ensureLabel(apiKey: string, label: string): Promise<string> {
 /**
  * Make sure there's a project present with a particular name, and get its ID.
  */
-async function ensureProject(apiKey: string, project: string): Promise<string> {
-  const client = new TodoistApi(apiKey);
+async function ensureProject(
+  client: TodoistApi,
+  project: string,
+): Promise<string> {
   const projects = (await client.getProjects()).results;
   const matches = projects.filter((l) => l.name === project);
 

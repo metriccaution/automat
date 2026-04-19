@@ -8,9 +8,10 @@ import {
   chooseAtRandom,
   mealDates,
   randomWithFreezing,
-} from "../recipe-choice/mod.ts";
-import { loadData } from "../data/mod.ts";
+} from "../recipe-choice/index.ts";
+import { loadData } from "../data/index.ts";
 import { removeUnplannedIngredient } from "../recipes/filtered-ingredients.ts";
+import { TodoistApi } from "@doist/todoist-api-typescript";
 
 export interface Config {
   /**
@@ -41,10 +42,12 @@ export async function planMeals({
   daysToPlan,
   planToFreeze,
 }: Config) {
+  const api = new TodoistApi(todoistToken);
+
   /**
    * Housekeeping
    */
-  await cleanupCooking(todoistToken);
+  await cleanupCooking(api);
 
   // TODO - Clean up shopping related to old cooking items
 
@@ -54,7 +57,7 @@ export async function planMeals({
 
   const [meals, daysAlreadyPlanned] = await Promise.all([
     loadFullMeals(await loadData(dataFile)),
-    listPlannedDays(todoistToken),
+    listPlannedDays(api),
   ]);
 
   /**
@@ -79,7 +82,7 @@ export async function planMeals({
    * Add any new shopping
    */
 
-  await saveMealPlan(todoistToken, ingredients, mealDays);
+  await saveMealPlan(api, ingredients, mealDays);
 
   // TODO - Normalise the shopping list down
 }

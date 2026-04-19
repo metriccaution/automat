@@ -3,7 +3,7 @@ import type {
   RawData,
   Recipe,
   RecipeIngredient,
-} from "../data/mod.ts";
+} from "../data/index.ts";
 import { normaliseUnits } from "./normalise-units.ts";
 
 export interface NormalisedIngredient {
