@@ -1,4 +1,4 @@
-import type { Ingredient } from "../data/mod.ts";
+import type { Ingredient } from "../data/index.ts";
 
 export type MeasureType = Ingredient["measure"];
 

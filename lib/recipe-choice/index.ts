@@ -16,7 +16,7 @@ export function chooseAtRandom(days: number, recipes: Meal[]): Meal[] {
   while (days > daysPicked) {
     const pickFrom = arrayShuffle(recipes.slice());
     while (days > daysPicked && pickFrom.length) {
-      const recipe = pickFrom.splice(0, 1)[0]!;
+      const recipe = pickFrom.shift()!;
       chosen.push(recipe);
       daysPicked = daysPicked + recipe.feeds;
     }
@@ -67,7 +67,9 @@ export function pickDates(
       chosenDays.push(new Date(currentDay));
     }
 
-    currentDay = new Date(currentDay.getTime() + 1000 * 60 * 60 * 24);
+    const next = new Date(currentDay);
+    next.setUTCDate(next.getUTCDate() + 1);
+    currentDay = next;
   }
 
   return chosenDays;
@@ -90,7 +92,7 @@ export function mealDates(
 
   if (dates.length !== mealTitles.length) {
     throw new Error(
-      `Mismatched dates and meal titles: ${dates}, ${mealTitles}`,
+      `Mismatched dates and meal titles: ${dates.map((d) => d.toISOString()).join(", ")}, ${mealTitles.join(", ")}`,
     );
   }
 

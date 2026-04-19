@@ -1,5 +1,5 @@
 import type { MealWithRecipes } from "./types.ts";
-import type { RawData, RecipeIngredient } from "../data/mod.ts";
+import type { RawData, RecipeIngredient } from "../data/index.ts";
 
 export { collateRecipes } from "./collate.ts";
 export type { MealWithRecipes } from "./types.ts";

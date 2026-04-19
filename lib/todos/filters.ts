@@ -72,8 +72,8 @@ export const filters = {
    * Priorities
    */
   priorityOne: () => valueFilter(`p1`),
-  priorityTwo: () => valueFilter(`p1`),
-  priorityThree: () => valueFilter(`p1`),
+  priorityTwo: () => valueFilter(`p2`),
+  priorityThree: () => valueFilter(`p3`),
   noPriority: () => valueFilter(`No priority`),
   /**
    * Labelling
