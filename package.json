@@ -16,6 +16,6 @@
   },
   "dependencies": {
     "@doist/todoist-api-typescript": "^7.10.0",
-    "zod": "^4.4.1"
+    "zod": "^4.4.3"
   }
 }
