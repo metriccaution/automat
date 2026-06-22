@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { planMeals } from "./lib/commands/plan";
 import { z } from "zod";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 
 const config = z
   .object({
@@ -14,7 +14,7 @@ const config = z
   );
 
 await planMeals({
-  dataFile: "../recipies/sources/repo.json",
+  mealRepo: resolve(__dirname, "meals"),
   daysToPlan: 7,
   planToFreeze: true,
   todoistToken: config.todoistToken,

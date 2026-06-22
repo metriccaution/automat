@@ -1,0 +1,9 @@
+name: Red Lentil Dhal
+feeds: 4
+recipes:
+  - Red Lentil Dhal
+otherIngredients:
+  - quantity: "2"
+    ingredient: Misc Vegetables
+  - quantity: 100g
+    ingredient: Brown Basmati Rice

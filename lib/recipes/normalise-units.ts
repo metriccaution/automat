@@ -164,5 +164,8 @@ export const normaliseUnits = (
 
       return normaliseText(quantityString);
     }
+    default: {
+      throw new Error(`Unknown type: ${measureType}`);
+    }
   }
 };

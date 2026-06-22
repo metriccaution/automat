@@ -1,0 +1,9 @@
+name: Cauliflower Cheese
+feeds: 2
+recipes:
+  - Cauliflower Cheese
+otherIngredients:
+  - quantity: "2"
+    ingredient: Misc Vegetables
+  - quantity: 100g
+    ingredient: Potatoes

@@ -1,0 +1,8 @@
+name: Mixed Curry (1)
+feeds: 3
+recipes:
+  - Red Lentil Dhal
+  - Saag Paneer
+otherIngredients:
+  - quantity: 100g
+    ingredient: Brown Basmati Rice

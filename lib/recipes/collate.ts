@@ -17,7 +17,6 @@ export interface NormalisedIngredient {
 export interface RecipeWithIngredients {
   title: string;
   section: string;
-  tags: string[];
   ingredients: NormalisedIngredient[];
 }
 
@@ -31,7 +30,6 @@ export function collateRecipes({
       normalised.push({
         title: recipe.title,
         section: recipe.section,
-        tags: recipe.tags,
         ingredients: mealIngredients(recipe)
           .map((i) => normaliseIngredient(ingredients, i))
           .flat(),

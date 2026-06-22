@@ -1,0 +1,11 @@
+name: Cashew Nut Curry
+feeds: 2
+recipes:
+  - Cashew Nut Curry
+otherIngredients:
+  - quantity: 100g
+    ingredient: Brown Basmati Rice
+  - quantity: "1"
+    ingredient: Naan
+  - quantity: "2"
+    ingredient: Papadam

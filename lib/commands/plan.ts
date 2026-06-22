@@ -17,7 +17,7 @@ export interface Config {
   /**
    * Where to find the recipe data.
    */
-  dataFile: string;
+  mealRepo: string;
   /**
    * API token for Todoist.
    */
@@ -37,7 +37,7 @@ export interface Config {
  * Put a number of day's food into Todoist.
  */
 export async function planMeals({
-  dataFile,
+  mealRepo,
   todoistToken,
   daysToPlan,
   planToFreeze,
@@ -56,7 +56,11 @@ export async function planMeals({
    */
 
   const [meals, daysAlreadyPlanned] = await Promise.all([
-    loadFullMeals(await loadData(dataFile)),
+    loadFullMeals(
+      await loadData({
+        mealsDirectory: mealRepo,
+      }),
+    ),
     listPlannedDays(api),
   ]);
 

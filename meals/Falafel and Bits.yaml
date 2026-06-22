@@ -1,0 +1,10 @@
+name: Falafel and Bits
+feeds: 2
+recipes:
+  - Air-Fryer Falafel
+  - Tabouli Salad
+otherIngredients:
+  - quantity: "4"
+    ingredient: Tortillas
+  - quantity: 300g
+    ingredient: Hummus
