@@ -31,15 +31,15 @@ export async function loadData(config: DataSourceProps): Promise<RawData> {
   ]);
 
   if (ingredients.length === 0) {
-    throw new Error("No ingredients found")
+    throw new Error("No ingredients found");
   }
 
   if (recipes.length === 0) {
-    throw new Error("No recipes found")
+    throw new Error("No recipes found");
   }
 
   if (meals.length === 0) {
-    throw new Error("No meals found")
+    throw new Error("No meals found");
   }
 
   return {
