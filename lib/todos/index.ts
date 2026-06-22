@@ -75,13 +75,32 @@ export async function listPlannedDays(apiClient: TodoistApi): Promise<Date[]> {
   return dates;
 }
 
+const RECIPE_BASE = "https://metriccaution.github.io/recipe-book/";
+
+function mealContent(meal: {
+  title: string;
+  recipes: Array<{ title: string; slug: string }>;
+}): string {
+  if (meal.recipes.length === 1) {
+    return `[${meal.title}](${RECIPE_BASE}${meal.recipes[0]!.slug}/)`;
+  }
+  const links = meal.recipes
+    .map((r) => `[${r.title}](${RECIPE_BASE}${r.slug}/)`)
+    .join(", ");
+  return `${meal.title} (${links})`;
+}
+
 /**
  * Save new recipes into Todoist.
  */
 export async function saveMealPlan(
   client: TodoistApi,
   ingredients: RecipeIngredient[],
-  meals: Array<{ title: string; date: Date }>,
+  meals: Array<{
+    title: string;
+    date: Date;
+    recipes: Array<{ title: string; slug: string }>;
+  }>,
 ): Promise<void> {
   const [label, groceriesProjectId, mealsProjectId] = await Promise.all([
     ensureLabel(client, automatLabel),
@@ -105,7 +124,7 @@ export async function saveMealPlan(
 
   for (const meal of meals) {
     await client.addTask({
-      content: meal.title,
+      content: mealContent(meal),
       labels: [label],
       projectId: mealsProjectId,
       dueDate: meal.date.toISOString().split("T")[0]!,

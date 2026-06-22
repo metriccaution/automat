@@ -78,6 +78,7 @@ export function pickDates(
 export interface RecipeForDay {
   title: string;
   date: Date;
+  recipes: Array<{ title: string; slug: string }>;
 }
 
 export function mealDates(
@@ -85,21 +86,24 @@ export function mealDates(
   days: number,
   meals: Meal[],
 ): RecipeForDay[] {
-  const mealTitles: string[] = meals.flatMap((meal) =>
-    new Array(meal.feeds).fill(meal.name),
+  const mealEntries = meals.flatMap((meal) =>
+    new Array(meal.feeds).fill({
+      title: meal.name,
+      recipes: meal.recipes.map((r) => ({ title: r.title, slug: r.slug })),
+    }),
   );
   const dates: Date[] = pickDates(new Date(), alreadyUsed, days);
 
-  if (dates.length !== mealTitles.length) {
+  if (dates.length !== mealEntries.length) {
     throw new Error(
-      `Mismatched dates and meal titles: ${dates.map((d) => d.toISOString()).join(", ")}, ${mealTitles.join(", ")}`,
+      `Mismatched dates and meal titles: ${dates.map((d) => d.toISOString()).join(", ")}, ${mealEntries.map((m: { title: string }) => m.title).join(", ")}`,
     );
   }
 
   const ret: RecipeForDay[] = [];
   for (let i = 0; i < dates.length; i++) {
     ret.push({
-      title: mealTitles[i]!,
+      ...mealEntries[i]!,
       date: dates[i]!,
     });
   }
