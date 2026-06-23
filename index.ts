@@ -6,6 +6,7 @@ import { join, resolve } from "node:path";
 const config = z
   .object({
     todoistToken: z.string(),
+    historyDb: z.string().optional(),
   })
   .parse(
     JSON.parse(
@@ -18,4 +19,5 @@ await planMeals({
   daysToPlan: 7,
   planToFreeze: true,
   todoistToken: config.todoistToken,
+  historyDb: config.historyDb,
 });

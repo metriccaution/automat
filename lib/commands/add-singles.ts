@@ -38,7 +38,7 @@ export async function addSingles({ mealRepo, todoistToken, recipes }: Config) {
   }
 
   const ingredientAliases = data.ingredients
-    .filter((i) => !(i.include === false))
+    .filter((i) => !(i.include_in_shopping === false))
     .reduce(
       (aliases, ingredient) => {
         aliases[ingredient.name] = ingredient.name;

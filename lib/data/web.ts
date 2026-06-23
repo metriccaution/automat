@@ -33,7 +33,7 @@ export const recipe = z.object({
 
 export const ingredient = z.object({
   name: z.string(),
-  include: z.boolean().optional().default(true),
+  include_in_shopping: z.boolean().optional().default(true),
   synonyms: z.array(z.string()),
   measure: z.string(),
 });

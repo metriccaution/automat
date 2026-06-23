@@ -1,4 +1,5 @@
 import type { MealWithRecipes as Meal } from "../recipes/mod.ts";
+import type { RecipeIngredient } from "../data/index.ts";
 import {
   arrayShuffle,
   suitableForFreezing,
@@ -79,6 +80,7 @@ export interface RecipeForDay {
   title: string;
   date: Date;
   recipes: Array<{ title: string; slug: string }>;
+  otherIngredients: RecipeIngredient[];
 }
 
 export function mealDates(
@@ -90,6 +92,7 @@ export function mealDates(
     new Array(meal.feeds).fill({
       title: meal.name,
       recipes: meal.recipes.map((r) => ({ title: r.title, slug: r.slug })),
+      otherIngredients: meal.otherIngredients,
     }),
   );
   const dates: Date[] = pickDates(new Date(), alreadyUsed, days);
