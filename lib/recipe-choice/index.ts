@@ -26,26 +26,10 @@ export function chooseAtRandom(days: number, recipes: Meal[]): Meal[] {
 }
 
 export function randomWithFreezing(days: number, recipes: Meal[]): Meal[] {
-  if (days === 0 || recipes.length === 0) {
-    return [];
-  }
-
-  let daysPicked = 0;
-  const chosen: Meal[] = [];
-
   const withFreezing = recipes.map((r) =>
     suitableForFreezing(r) ? updateForFreezing(r) : r,
   );
-
-  while (days > daysPicked) {
-    const pickFrom = arrayShuffle(withFreezing.slice());
-    while (days > daysPicked && pickFrom.length) {
-      const recipe = pickFrom.splice(0, 1)[0]!;
-      chosen.push(recipe);
-      daysPicked = daysPicked + recipe.feeds;
-    }
-  }
-  return chosen;
+  return chooseAtRandom(days, withFreezing);
 }
 
 const removeTime = (date: Date): Date =>
