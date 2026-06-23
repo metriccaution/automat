@@ -1,0 +1,9 @@
+name: Pasta and Sauce
+feeds: 2
+recipes:
+  - Quick Tomato and Olive Sauce
+otherIngredients:
+  - quantity: 200g
+    ingredient: Dry Pasta
+  - quantity: "2"
+    ingredient: Misc Vegetables

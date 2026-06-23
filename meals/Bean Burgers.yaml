@@ -1,0 +1,7 @@
+name: Bean Burgers
+feeds: 2
+recipes:
+  - Broad Bean Burgers
+otherIngredients:
+  - quantity: "4"
+    ingredient: Bread Roll

@@ -1,0 +1,7 @@
+name: Chickpea Frittata
+feeds: 2
+recipes:
+  - Chickpea Frittata
+otherIngredients:
+  - quantity: "1"
+    ingredient: Misc Vegetables

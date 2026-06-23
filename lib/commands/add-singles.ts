@@ -6,7 +6,7 @@ export interface Config {
   /**
    * Where to find the recipe data.
    */
-  dataFile: string;
+  mealRepo: string;
   /**
    * API token for Todoist.
    */
@@ -24,19 +24,21 @@ export interface Config {
 /**
  * Add the ingredients for a one-off plan.
  */
-export async function addSingles({ dataFile, todoistToken, recipes }: Config) {
+export async function addSingles({ mealRepo, todoistToken, recipes }: Config) {
   /**
    * Load up data files
    */
 
-  const data = await loadData(dataFile);
+  const data = await loadData({
+    mealsDirectory: mealRepo,
+  });
   const pickedRecipes = data.recipes.filter((r) => recipes.includes(r.title));
   if (pickedRecipes.length !== recipes.length) {
     throw new Error("Didn't find all the recipes");
   }
 
   const ingredientAliases = data.ingredients
-    .filter((i) => !(i.include === false))
+    .filter((i) => !(i.include_in_shopping === false))
     .reduce(
       (aliases, ingredient) => {
         aliases[ingredient.name] = ingredient.name;

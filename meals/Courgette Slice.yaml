@@ -1,0 +1,7 @@
+name: Courgette Slice
+feeds: 2
+recipes:
+  - Courgette Slice
+otherIngredients:
+  - quantity: "2"
+    ingredient: Misc Vegetables

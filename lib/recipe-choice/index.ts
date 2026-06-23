@@ -1,4 +1,5 @@
 import type { MealWithRecipes as Meal } from "../recipes/mod.ts";
+import type { RecipeIngredient } from "../data/index.ts";
 import {
   arrayShuffle,
   suitableForFreezing,
@@ -25,26 +26,10 @@ export function chooseAtRandom(days: number, recipes: Meal[]): Meal[] {
 }
 
 export function randomWithFreezing(days: number, recipes: Meal[]): Meal[] {
-  if (days === 0 || recipes.length === 0) {
-    return [];
-  }
-
-  let daysPicked = 0;
-  const chosen: Meal[] = [];
-
   const withFreezing = recipes.map((r) =>
     suitableForFreezing(r) ? updateForFreezing(r) : r,
   );
-
-  while (days > daysPicked) {
-    const pickFrom = arrayShuffle(withFreezing.slice());
-    while (days > daysPicked && pickFrom.length) {
-      const recipe = pickFrom.splice(0, 1)[0]!;
-      chosen.push(recipe);
-      daysPicked = daysPicked + recipe.feeds;
-    }
-  }
-  return chosen;
+  return chooseAtRandom(days, withFreezing);
 }
 
 const removeTime = (date: Date): Date =>
@@ -78,6 +63,8 @@ export function pickDates(
 export interface RecipeForDay {
   title: string;
   date: Date;
+  recipes: Array<{ title: string; slug: string }>;
+  otherIngredients: RecipeIngredient[];
 }
 
 export function mealDates(
@@ -85,21 +72,25 @@ export function mealDates(
   days: number,
   meals: Meal[],
 ): RecipeForDay[] {
-  const mealTitles: string[] = meals.flatMap((meal) =>
-    new Array(meal.feeds).fill(meal.name),
+  const mealEntries = meals.flatMap((meal) =>
+    new Array(meal.feeds).fill({
+      title: meal.name,
+      recipes: meal.recipes.map((r) => ({ title: r.title, slug: r.slug })),
+      otherIngredients: meal.otherIngredients,
+    }),
   );
   const dates: Date[] = pickDates(new Date(), alreadyUsed, days);
 
-  if (dates.length !== mealTitles.length) {
+  if (dates.length !== mealEntries.length) {
     throw new Error(
-      `Mismatched dates and meal titles: ${dates.map((d) => d.toISOString()).join(", ")}, ${mealTitles.join(", ")}`,
+      `Mismatched dates and meal titles: ${dates.map((d) => d.toISOString()).join(", ")}, ${mealEntries.map((m: { title: string }) => m.title).join(", ")}`,
     );
   }
 
   const ret: RecipeForDay[] = [];
   for (let i = 0; i < dates.length; i++) {
     ret.push({
-      title: mealTitles[i]!,
+      ...mealEntries[i]!,
       date: dates[i]!,
     });
   }

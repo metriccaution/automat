@@ -75,13 +75,33 @@ export async function listPlannedDays(apiClient: TodoistApi): Promise<Date[]> {
   return dates;
 }
 
+const RECIPE_BASE = "https://metriccaution.github.io/recipe-book/";
+
+function mealContent(meal: {
+  title: string;
+  recipes: Array<{ title: string; slug: string }>;
+}): string {
+  if (meal.recipes.length === 1) {
+    return `[${meal.title}](${RECIPE_BASE}${meal.recipes[0]!.slug}/)`;
+  }
+  const links = meal.recipes
+    .map((r) => `[${r.title}](${RECIPE_BASE}${r.slug}/)`)
+    .join(", ");
+  return `${meal.title} (${links})`;
+}
+
 /**
  * Save new recipes into Todoist.
  */
 export async function saveMealPlan(
   client: TodoistApi,
   ingredients: RecipeIngredient[],
-  meals: Array<{ title: string; date: Date }>,
+  meals: Array<{
+    title: string;
+    date: Date;
+    recipes: Array<{ title: string; slug: string }>;
+    otherIngredients: RecipeIngredient[];
+  }>,
 ): Promise<void> {
   const [label, groceriesProjectId, mealsProjectId] = await Promise.all([
     ensureLabel(client, automatLabel),
@@ -89,26 +109,38 @@ export async function saveMealPlan(
     ensureProject(client, mealsProject),
   ]);
 
-  const sortedIngredients = ingredients
-    .slice()
-    .sort((a, b) =>
-      a.ingredient.toLowerCase().localeCompare(b.ingredient.toLowerCase()),
-    );
+  const grouped = new Map<string, string[]>();
+  for (const { ingredient, quantity } of ingredients) {
+    const existing = grouped.get(ingredient) ?? [];
+    existing.push(quantity);
+    grouped.set(ingredient, existing);
+  }
 
-  for (const ingredient of sortedIngredients) {
+  const sortedNames = [...grouped.keys()].sort((a, b) =>
+    a.toLowerCase().localeCompare(b.toLowerCase()),
+  );
+
+  for (const name of sortedNames) {
+    const quantities = grouped.get(name)!;
     await client.addTask({
-      content: `${ingredient.ingredient} - ${ingredient.quantity}`,
+      content: `${quantities.join(" + ")} ${name}`,
       labels: [label],
       projectId: groceriesProjectId,
     });
   }
 
   for (const meal of meals) {
+    const description =
+      meal.otherIngredients
+        .map((i) => `${i.ingredient} - ${i.quantity}`)
+        .join("\n") || undefined;
+
     await client.addTask({
-      content: meal.title,
+      content: mealContent(meal),
       labels: [label],
       projectId: mealsProjectId,
       dueDate: meal.date.toISOString().split("T")[0]!,
+      description,
     });
   }
 }
