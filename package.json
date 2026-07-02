@@ -9,13 +9,13 @@
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "prettier": "^3.8.3"
+    "prettier": "^3.8.4"
   },
   "peerDependencies": {
     "typescript": "^6"
   },
   "dependencies": {
     "@doist/todoist-sdk": "^10.5.0",
-    "zod": "^4.3.6"
+    "zod": "^4.4.3"
   }
 }
