@@ -1,4 +1,4 @@
-import { TodoistApi, type Task } from "@doist/todoist-api-typescript";
+import { TodoistApi, type Task } from "@doist/todoist-sdk";
 import type { RecipeIngredient } from "../data/index.ts";
 import { filters, toFilter } from "./filters.ts";
 
@@ -37,6 +37,22 @@ export async function cleanupCooking(api: TodoistApi): Promise<void> {
     api,
     toFilter(
       and(project(mealsProject), dueBefore("Today"), withLabel(automatLabel)),
+    ),
+  );
+}
+
+/**
+ * Clear up any grocery tasks whose cooking date has passed
+ */
+export async function cleanupShopping(api: TodoistApi): Promise<void> {
+  await deleteByQuery(
+    api,
+    toFilter(
+      and(
+        project(groceriesProject),
+        dueBefore("Today"),
+        withLabel(automatLabel),
+      ),
     ),
   );
 }
@@ -95,7 +111,11 @@ function mealContent(meal: {
  */
 export async function saveMealPlan(
   client: TodoistApi,
-  ingredients: RecipeIngredient[],
+  ingredients: Array<{
+    ingredient: string;
+    quantity: string;
+    cookingDate: string;
+  }>,
   meals: Array<{
     title: string;
     date: Date;
@@ -109,11 +129,16 @@ export async function saveMealPlan(
     ensureProject(client, mealsProject),
   ]);
 
-  const grouped = new Map<string, string[]>();
-  for (const { ingredient, quantity } of ingredients) {
-    const existing = grouped.get(ingredient) ?? [];
-    existing.push(quantity);
-    grouped.set(ingredient, existing);
+  // Group by ingredient name, then by cooking date — quantities are merged within
+  // the same date but kept separate across dates so stale items can be cleaned up
+  // individually per meal.
+  const grouped = new Map<string, Map<string, string[]>>();
+  for (const { ingredient, quantity, cookingDate } of ingredients) {
+    const byDate = grouped.get(ingredient) ?? new Map<string, string[]>();
+    const quantities = byDate.get(cookingDate) ?? [];
+    quantities.push(quantity);
+    byDate.set(cookingDate, quantities);
+    grouped.set(ingredient, byDate);
   }
 
   const sortedNames = [...grouped.keys()].sort((a, b) =>
@@ -121,12 +146,15 @@ export async function saveMealPlan(
   );
 
   for (const name of sortedNames) {
-    const quantities = grouped.get(name)!;
-    await client.addTask({
-      content: `${quantities.join(" + ")} ${name}`,
-      labels: [label],
-      projectId: groceriesProjectId,
-    });
+    const byDate = grouped.get(name)!;
+    for (const [cookingDate, quantities] of [...byDate.entries()].sort()) {
+      await client.addTask({
+        content: `${quantities.join(" + ")} ${name}`,
+        labels: [label],
+        projectId: groceriesProjectId,
+        dueDate: cookingDate,
+      });
+    }
   }
 
   for (const meal of meals) {

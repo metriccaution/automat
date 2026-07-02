@@ -1,6 +1,6 @@
 import { saveMealPlan } from "../todos/index.ts";
 import { loadData, type RecipeIngredient } from "../data/index.ts";
-import { TodoistApi } from "@doist/todoist-api-typescript";
+import { TodoistApi } from "@doist/todoist-sdk";
 
 export interface Config {
   /**
@@ -51,14 +51,20 @@ export async function addSingles({ mealRepo, todoistToken, recipes }: Config) {
       {} as Record<string, string>,
     );
 
+  const cookingDate = new Date().toISOString().split("T")[0]!;
+
   const ingredientsToPlan = pickedRecipes
     .flatMap((r) => r.ingredients)
     .flatMap((i) => i.ingredients)
     .map((ingredient) => ({
       quantity: ingredient.quantity,
       ingredient: ingredientAliases[ingredient.ingredient],
+      cookingDate,
     }))
-    .filter((i): i is RecipeIngredient => Boolean(i.ingredient))
+    .filter(
+      (i): i is { ingredient: string; quantity: string; cookingDate: string } =>
+        Boolean(i.ingredient),
+    )
     .sort((a, b) => a.ingredient.localeCompare(b.ingredient));
 
   await saveMealPlan(new TodoistApi(todoistToken), ingredientsToPlan, []);
