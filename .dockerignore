@@ -1,0 +1,5 @@
+config.json
+planningHistory.sqlite
+.git
+.github
+node_modules

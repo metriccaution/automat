@@ -1,6 +1,7 @@
 import { loadFullMeals, mealIngredients } from "../recipes/mod.ts";
 import {
   cleanupCooking,
+  cleanupShopping,
   listPlannedDays,
   saveMealPlan,
 } from "../todos/index.ts";
@@ -10,7 +11,7 @@ import {
   randomWithFreezing,
 } from "../recipe-choice/index.ts";
 import { loadData } from "../data/index.ts";
-import { TodoistApi } from "@doist/todoist-api-typescript";
+import { TodoistApi } from "@doist/todoist-sdk";
 import { openHistory, recentMealNames, recordMeals } from "../data/history.ts";
 
 export interface Config {
@@ -53,9 +54,7 @@ export async function planMeals({
   /**
    * Housekeeping
    */
-  await cleanupCooking(api);
-
-  // TODO - Clean up shopping related to old cooking items
+  await Promise.all([cleanupCooking(api), cleanupShopping(api)]);
 
   /**
    * Load up data files
@@ -114,20 +113,36 @@ export async function planMeals({
     ? randomWithFreezing(missingDaysFood, mealPool)
     : chooseAtRandom(missingDaysFood, mealPool);
 
-  const ingredients = toAdd
-    .flatMap((m) => mealIngredients(m))
-    .filter(
-      (i) =>
-        !i.ingredient
-          .split(" / ")
-          .map((part) => part.trim())
-          .every((part) => excludedIngredients.has(part)),
-    );
   const mealDays = mealDates(
     daysAlreadyPlanned,
     toAdd.map((meal) => meal.feeds).reduce((s, i) => s + i, 0),
     toAdd,
   );
+
+  // Associate each ingredient with the last cooking day of its meal — that way
+  // missing one day in a multi-day run still leaves time to shop before the
+  // item becomes stale.
+  let dayOffset = 0;
+  const ingredients: Array<{
+    ingredient: string;
+    quantity: string;
+    cookingDate: string;
+  }> = [];
+  for (const meal of toAdd) {
+    const lastDay = mealDays[dayOffset + meal.feeds - 1]!;
+    const cookingDate = lastDay.date.toISOString().split("T")[0]!;
+    for (const ingredient of mealIngredients(meal)) {
+      if (
+        !ingredient.ingredient
+          .split(" / ")
+          .map((part) => part.trim())
+          .every((part) => excludedIngredients.has(part))
+      ) {
+        ingredients.push({ ...ingredient, cookingDate });
+      }
+    }
+    dayOffset += meal.feeds;
+  }
 
   /**
    * Add any new shopping
