@@ -127,6 +127,7 @@ export async function planMeals({
     ingredient: string;
     quantity: string;
     cookingDate: string;
+    recipe: string;
   }> = [];
   for (const meal of toAdd) {
     const lastDay = mealDays[dayOffset + meal.feeds - 1]!;
@@ -138,7 +139,7 @@ export async function planMeals({
           .map((part) => part.trim())
           .every((part) => excludedIngredients.has(part))
       ) {
-        ingredients.push({ ...ingredient, cookingDate });
+        ingredients.push({ ...ingredient, cookingDate, recipe: meal.name });
       }
     }
     dayOffset += meal.feeds;

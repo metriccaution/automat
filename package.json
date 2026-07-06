@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@doist/todoist-sdk": "^10.5.1",
+    "smol-toml": "^1.7.0",
     "zod": "^4.4.3"
   }
 }
