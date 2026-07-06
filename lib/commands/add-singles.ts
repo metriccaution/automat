@@ -54,16 +54,25 @@ export async function addSingles({ mealRepo, todoistToken, recipes }: Config) {
   const cookingDate = new Date().toISOString().split("T")[0]!;
 
   const ingredientsToPlan = pickedRecipes
-    .flatMap((r) => r.ingredients)
-    .flatMap((i) => i.ingredients)
-    .map((ingredient) => ({
-      quantity: ingredient.quantity,
-      ingredient: ingredientAliases[ingredient.ingredient],
-      cookingDate,
-    }))
+    .flatMap((r) =>
+      r.ingredients
+        .flatMap((i) => i.ingredients)
+        .map((ingredient) => ({
+          quantity: ingredient.quantity,
+          ingredient: ingredientAliases[ingredient.ingredient],
+          cookingDate,
+          recipe: r.title,
+        })),
+    )
     .filter(
-      (i): i is { ingredient: string; quantity: string; cookingDate: string } =>
-        Boolean(i.ingredient),
+      (
+        i,
+      ): i is {
+        ingredient: string;
+        quantity: string;
+        cookingDate: string;
+        recipe: string;
+      } => Boolean(i.ingredient),
     )
     .sort((a, b) => a.ingredient.localeCompare(b.ingredient));
 

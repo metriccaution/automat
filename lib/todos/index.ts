@@ -1,6 +1,40 @@
+import { parse as parseTOML, stringify as stringifyTOML } from "smol-toml";
 import { TodoistApi, type Task } from "@doist/todoist-sdk";
+import { z } from "zod";
 import type { RecipeIngredient } from "../data/index.ts";
 import { filters, toFilter } from "./filters.ts";
+
+const shoppingEntry = z.object({
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  quantity: z.string(),
+  recipe: z.string(),
+});
+
+const shoppingMetadata = z.object({
+  ingredient: z.string(),
+  items: z.array(shoppingEntry).min(1),
+});
+
+type ShoppingMetadata = z.infer<typeof shoppingMetadata>;
+
+function shoppingContent(
+  ingredient: string,
+  items: Array<{ quantity: string }>,
+): string {
+  return `${items.map((i) => i.quantity).join(" + ")} ${ingredient}`;
+}
+
+function parseShoppingDescription(
+  task: Pick<Task, "description">,
+): ShoppingMetadata | undefined {
+  if (!task.description) return undefined;
+  try {
+    const parsed = shoppingMetadata.safeParse(parseTOML(task.description));
+    return parsed.success ? parsed.data : undefined;
+  } catch {
+    return undefined;
+  }
+}
 
 const { and, dueBefore, dueOn, or, project, dueAfter, withLabel } = filters;
 
@@ -45,16 +79,30 @@ export async function cleanupCooking(api: TodoistApi): Promise<void> {
  * Clear up any grocery tasks whose cooking date has passed
  */
 export async function cleanupShopping(api: TodoistApi): Promise<void> {
-  await deleteByQuery(
-    api,
-    toFilter(
-      and(
-        project(groceriesProject),
-        dueBefore("Today"),
-        withLabel(automatLabel),
-      ),
-    ),
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const query = toFilter(
+    and(project(groceriesProject), withLabel(automatLabel)),
   );
+  for await (const task of tasksForQuery(api, query)) {
+    const data = parseShoppingDescription(task);
+    if (!data) continue;
+
+    const remaining = data.items.filter((item) => new Date(item.date) >= today);
+
+    if (remaining.length === 0) {
+      await api.closeTask(task.id);
+    } else if (remaining.length < data.items.length) {
+      await api.updateTask(task.id, {
+        content: shoppingContent(data.ingredient, remaining),
+        description: stringifyTOML({
+          ingredient: data.ingredient,
+          items: remaining,
+        }),
+      });
+    }
+  }
 }
 
 export function dueDate(task: Pick<Task, "due">): Date | undefined {
@@ -115,6 +163,7 @@ export async function saveMealPlan(
     ingredient: string;
     quantity: string;
     cookingDate: string;
+    recipe: string;
   }>,
   meals: Array<{
     title: string;
@@ -129,32 +178,26 @@ export async function saveMealPlan(
     ensureProject(client, mealsProject),
   ]);
 
-  // Group by ingredient name, then by cooking date — quantities are merged within
-  // the same date but kept separate across dates so stale items can be cleaned up
-  // individually per meal.
-  const grouped = new Map<string, Map<string, string[]>>();
-  for (const { ingredient, quantity, cookingDate } of ingredients) {
-    const byDate = grouped.get(ingredient) ?? new Map<string, string[]>();
-    const quantities = byDate.get(cookingDate) ?? [];
-    quantities.push(quantity);
-    byDate.set(cookingDate, quantities);
-    grouped.set(ingredient, byDate);
+  const grouped = new Map<
+    string,
+    Array<{ date: string; quantity: string; recipe: string }>
+  >();
+  for (const { ingredient, quantity, cookingDate, recipe } of ingredients) {
+    const entries = grouped.get(ingredient) ?? [];
+    entries.push({ date: cookingDate, quantity, recipe });
+    grouped.set(ingredient, entries);
   }
 
-  const sortedNames = [...grouped.keys()].sort((a, b) =>
+  for (const name of [...grouped.keys()].sort((a, b) =>
     a.toLowerCase().localeCompare(b.toLowerCase()),
-  );
-
-  for (const name of sortedNames) {
-    const byDate = grouped.get(name)!;
-    for (const [cookingDate, quantities] of [...byDate.entries()].sort()) {
-      await client.addTask({
-        content: `${quantities.join(" + ")} ${name}`,
-        labels: [label],
-        projectId: groceriesProjectId,
-        dueDate: cookingDate,
-      });
-    }
+  )) {
+    const items = grouped.get(name)!;
+    await client.addTask({
+      content: shoppingContent(name, items),
+      labels: [label],
+      projectId: groceriesProjectId,
+      description: stringifyTOML({ ingredient: name, items }),
+    });
   }
 
   for (const meal of meals) {
