@@ -15,7 +15,7 @@
     "typescript": "^6"
   },
   "dependencies": {
-    "@doist/todoist-sdk": "^14.1.0",
+    "@doist/todoist-sdk": "^15.1.0",
     "smol-toml": "^1.8.0",
     "zod": "^4.4.3"
   }
