@@ -1,5 +1,6 @@
-import { describe, expect, test } from "bun:test";
-import { filters, toFilter, type FilterComponent } from "./filters";
+import assert from "node:assert/strict";
+import { describe, test } from "node:test";
+import { filters, toFilter, type FilterComponent } from "./filters.ts";
 
 describe("toFilter", () => {
   const tests: Array<{ filter: FilterComponent; expected: string }> = [
@@ -37,7 +38,7 @@ describe("toFilter", () => {
 
   for (const { expected, filter } of tests) {
     test(`Filter from ${JSON.stringify(filter)}`, () => {
-      expect(toFilter(filter)).toEqual(expected);
+      assert.deepEqual(toFilter(filter), expected);
     });
   }
 });

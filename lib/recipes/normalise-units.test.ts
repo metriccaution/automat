@@ -1,47 +1,48 @@
-import { expect, test } from "bun:test";
+import assert from "node:assert/strict";
+import { test } from "node:test";
 import { normaliseUnits } from "./normalise-units.ts";
 
 test("normaliseUnits should return just the number back when there's a numbered single item", () => {
-  expect(normaliseUnits("singles", "1")).toBe("1");
-  expect(normaliseUnits("singles", " 1  ")).toBe("1");
-  expect(normaliseUnits("singles", "1.3")).toBe("1.3");
-  expect(normaliseUnits("singles", "0.5")).toBe("0.5");
-  expect(normaliseUnits("singles", ".5")).toBe("0.5");
-  expect(normaliseUnits("singles", "5000")).toBe("5000");
-  expect(normaliseUnits("singles", "½")).toBe("0.5");
-  expect(normaliseUnits("singles", "1/2")).toBe("0.5");
+  assert.equal(normaliseUnits("singles", "1"), "1");
+  assert.equal(normaliseUnits("singles", " 1  "), "1");
+  assert.equal(normaliseUnits("singles", "1.3"), "1.3");
+  assert.equal(normaliseUnits("singles", "0.5"), "0.5");
+  assert.equal(normaliseUnits("singles", ".5"), "0.5");
+  assert.equal(normaliseUnits("singles", "5000"), "5000");
+  assert.equal(normaliseUnits("singles", "½"), "0.5");
+  assert.equal(normaliseUnits("singles", "1/2"), "0.5");
 });
 
 test("normaliseUnits should keep the units attached to singles", () => {
-  expect(normaliseUnits("singles", "1 clove")).toBe("1 clove");
-  expect(normaliseUnits("singles", "½ Handful")).toBe("0.5 handful");
-  expect(normaliseUnits("singles", "1/4 Handful")).toBe("0.25 handful");
-  expect(normaliseUnits("singles", "3/4 Handful")).toBe("0.75 handful");
-  expect(normaliseUnits("singles", "2cm")).toBe("2 cm");
-  expect(normaliseUnits("singles", ".33cm")).toBe("0.33 cm");
+  assert.equal(normaliseUnits("singles", "1 clove"), "1 clove");
+  assert.equal(normaliseUnits("singles", "½ Handful"), "0.5 handful");
+  assert.equal(normaliseUnits("singles", "1/4 Handful"), "0.25 handful");
+  assert.equal(normaliseUnits("singles", "3/4 Handful"), "0.75 handful");
+  assert.equal(normaliseUnits("singles", "2cm"), "2 cm");
+  assert.equal(normaliseUnits("singles", ".33cm"), "0.33 cm");
 });
 
 test("normaliseUnits should handle items without a number", () => {
-  expect(normaliseUnits("singles", "clove")).toBe("1 clove");
-  expect(normaliseUnits("singles", "Handful")).toBe("1 handful");
+  assert.equal(normaliseUnits("singles", "clove"), "1 clove");
+  assert.equal(normaliseUnits("singles", "Handful"), "1 handful");
 });
 
 test("normaliseUnits should handle weights", () => {
-  expect(normaliseUnits("weight", "5")).toBe("5");
-  expect(normaliseUnits("weight", "5g")).toBe("5 g");
-  expect(normaliseUnits("weight", "5kg")).toBe("5 kg");
-  expect(normaliseUnits("weight", "5 kg")).toBe("5 kg");
-  expect(normaliseUnits("weight", "123.45g")).toBe("123.45 g");
-  expect(normaliseUnits("weight", "5tsp")).toBe("5 tsp");
+  assert.equal(normaliseUnits("weight", "5"), "5");
+  assert.equal(normaliseUnits("weight", "5g"), "5 g");
+  assert.equal(normaliseUnits("weight", "5kg"), "5 kg");
+  assert.equal(normaliseUnits("weight", "5 kg"), "5 kg");
+  assert.equal(normaliseUnits("weight", "123.45g"), "123.45 g");
+  assert.equal(normaliseUnits("weight", "5tsp"), "5 tsp");
 });
 
 test("normaliseUnits should handle volumes", () => {
-  expect(normaliseUnits("volume", "5ml")).toBe("5 ml");
-  expect(normaliseUnits("volume", "5l")).toBe("5 l");
-  expect(normaliseUnits("volume", "5tsp")).toBe("5 tsp");
+  assert.equal(normaliseUnits("volume", "5ml"), "5 ml");
+  assert.equal(normaliseUnits("volume", "5l"), "5 l");
+  assert.equal(normaliseUnits("volume", "5tsp"), "5 tsp");
 });
 
 test("normaliseUnits should handle cans", () => {
-  expect(normaliseUnits("can", "400g can")).toBe("1 400g can");
-  expect(normaliseUnits("can", "2 400g cans")).toBe("2 400g can");
+  assert.equal(normaliseUnits("can", "400g can"), "1 400g can");
+  assert.equal(normaliseUnits("can", "2 400g cans"), "2 400g can");
 });

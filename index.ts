@@ -1,5 +1,5 @@
 import { readFile } from "node:fs/promises";
-import { planMeals } from "./lib/commands/plan";
+import { planMeals } from "./lib/commands/plan.ts";
 import { z } from "zod";
 import { join, resolve } from "node:path";
 
@@ -15,7 +15,7 @@ const config = z
   );
 
 await planMeals({
-  mealRepo: resolve(__dirname, "meals"),
+  mealRepo: resolve(import.meta.dirname, "meals"),
   daysToPlan: 7,
   planToFreeze: true,
   todoistToken: config.todoistToken,

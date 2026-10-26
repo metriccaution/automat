@@ -1,10 +1,10 @@
-FROM oven/bun:1-alpine
+FROM node:24-alpine
 
 WORKDIR /app
 
-# Install runtime deps (no devDependencies needed — bun runs TS directly)
-COPY package.json bun.lock ./
-RUN bun install --frozen-lockfile --production
+# Install runtime deps (no devDependencies needed — node runs TS directly)
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
 
 # Copy application source and meal definitions
 COPY index.ts tsconfig.json ./
@@ -13,7 +13,7 @@ COPY meals/ ./meals/
 
 # Cron job: run planner every day at 03:00
 # Output is redirected to PID-1's stdout so it appears in `docker logs`
-RUN printf '0 3 * * *\tcd /app && bun run index.ts >> /proc/1/fd/1 2>&1\n' \
+RUN printf '37 22 * * *\tcd /app && node index.ts >> /proc/1/fd/1 2>&1\n' \
     > /etc/crontabs/root
 
 # /data is the mount point for the SQLite history DB

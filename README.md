@@ -15,7 +15,7 @@ This should be pretty simple:
 ### Building the Code
 
 ```bash
-bun install
+npm install
 ```
 
 ### Configuration File
@@ -31,5 +31,5 @@ Currently, there's just one option:
 ### Actually Running
 
 ```bash
-bun run plan
+npm run plan
 ```

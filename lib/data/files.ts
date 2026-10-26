@@ -1,7 +1,7 @@
-import { YAML } from "bun";
+import { parse as parseYaml } from "yaml";
 import { readdir } from "node:fs/promises";
 import { z } from "zod";
-import { recipeIngredient } from "./web";
+import { recipeIngredient } from "./web.ts";
 import { lstat } from "node:fs/promises";
 import { join } from "node:path";
 import { readFile } from "node:fs/promises";
@@ -27,7 +27,7 @@ export async function loadMealsDirectory(
 
     meals.push(
       meal.parse(
-        YAML.parse(await readFile(join(mealsDirectory, file), "utf-8")),
+        parseYaml(await readFile(join(mealsDirectory, file), "utf-8")),
       ),
     );
   }

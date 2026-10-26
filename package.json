@@ -4,12 +4,15 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "plan": "bun run index.ts",
-    "test": "prettier --write --log-level=warn . && tsc && bun test"
+    "plan": "node index.ts",
+    "test": "prettier --write --log-level=warn . && tsc && node --test \"lib/**/*.test.ts\""
   },
   "devDependencies": {
-    "@types/bun": "latest",
+    "@types/node": "^24.0.0",
     "prettier": "^3.9.10"
+  },
+  "engines": {
+    "node": ">=24"
   },
   "peerDependencies": {
     "typescript": "^6"
@@ -17,6 +20,7 @@
   "dependencies": {
     "@doist/todoist-sdk": "^15.5.0",
     "smol-toml": "^1.9.1",
+    "yaml": "^2.8.0",
     "zod": "^4.6.7"
   }
 }

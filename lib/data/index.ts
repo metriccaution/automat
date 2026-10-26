@@ -1,8 +1,8 @@
 import { readFile } from "node:fs/promises";
-import { loadRepo, type Ingredient, type Recipe } from "./web";
-import { loadMealsDirectory, type Meal } from "./files";
-export type { RecipeIngredient, Recipe, Ingredient } from "./web";
-export type { Meal } from "./files";
+import { loadRepo, type Ingredient, type Recipe } from "./web.ts";
+import { loadMealsDirectory, type Meal } from "./files.ts";
+export type { RecipeIngredient, Recipe, Ingredient } from "./web.ts";
+export type { Meal } from "./files.ts";
 
 /**
  * The whole recipe list

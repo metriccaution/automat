@@ -1,25 +1,28 @@
-import { dueDate } from ".";
-import { describe, expect, test } from "bun:test";
+import { dueDate } from "./index.ts";
+import assert from "node:assert/strict";
+import { describe, test } from "node:test";
 
 describe("dueDate", () => {
   test("No due date", () => {
-    expect(dueDate({ due: null })).toBeUndefined();
+    assert.equal(dueDate({ due: null }), undefined);
   });
 
   test("Valid due date", () => {
     const now = new Date();
-    expect(
+    assert.deepEqual(
       dueDate({
         due: { date: now.toISOString(), isRecurring: false, string: "now" },
       }),
-    ).toEqual(now);
+      now,
+    );
   });
 
   test("Invalid due date", () => {
-    expect(
+    assert.equal(
       dueDate({
         due: { date: "cheese", isRecurring: false, string: "now" },
       }),
-    ).toBeUndefined();
+      undefined,
+    );
   });
 });
