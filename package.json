@@ -1,15 +1,18 @@
 {
   "name": "automat",
-  "module": "index.ts",
   "type": "module",
   "private": true,
   "scripts": {
-    "plan": "node index.ts",
+    "start": "node server.ts",
+    "dev": "npm run build:css && node --watch server.ts",
+    "build:css": "sass --load-path=node_modules --no-source-map --style=compressed --quiet-deps styles/automat.scss public/css/automat.css",
+    "build:icons": "node scripts/build-icons.ts",
     "test": "prettier --write --log-level=warn . && tsc && node --test \"lib/**/*.test.ts\""
   },
   "devDependencies": {
     "@types/node": "^24.0.0",
-    "prettier": "^3.9.10"
+    "prettier": "^3.9.10",
+    "sass": "^1.107.1"
   },
   "engines": {
     "node": ">=24"
@@ -19,6 +22,11 @@
   },
   "dependencies": {
     "@doist/todoist-sdk": "^15.5.0",
+    "@hono/node-server": "^2.1.6",
+    "accessible-autocomplete": "^3.0.2",
+    "govuk-frontend": "^6.6.0",
+    "hono": "^4.13.16",
+    "htmx.org": "^2.0.11",
     "smol-toml": "^1.9.1",
     "yaml": "^2.8.0",
     "zod": "^4.6.7"

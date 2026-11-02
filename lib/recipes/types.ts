@@ -2,11 +2,15 @@
  * Data types for recipe planning
  */
 
-import type { Meal, Recipe } from "../data/index.ts";
+import type { Recipe, RecipeIngredient } from "../data/index.ts";
 
 /**
  * A meal with all the recipes replaced with their full contents.
  */
-export type MealWithRecipes = Omit<Meal, "recipes"> & {
+export interface MealWithRecipes {
+  name: string;
+  feeds: number;
+  freezable: boolean;
   recipes: Recipe[];
-};
+  otherIngredients: RecipeIngredient[];
+}

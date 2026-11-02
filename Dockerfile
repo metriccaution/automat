@@ -1,24 +1,39 @@
+FROM node:24-alpine AS build
+
+WORKDIR /app
+
+# Dev dependencies (sass) are only needed to compile the stylesheet
+COPY package.json package-lock.json ./
+RUN npm ci
+
+COPY styles/ ./styles/
+RUN npm run build:css
+
 FROM node:24-alpine
 
 WORKDIR /app
 
-# Install runtime deps (no devDependencies needed — node runs TS directly)
+# Runtime deps only — node runs the TypeScript directly
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 
-# Copy application source and meal definitions
-COPY index.ts tsconfig.json ./
+COPY server.ts tsconfig.json ./
 COPY lib/ ./lib/
+COPY public/ ./public/
+COPY --from=build /app/public/css/ ./public/css/
+# Seed for the one-time import into the database (removed in Phase 5)
 COPY meals/ ./meals/
 
-# Cron job: run planner every day at 03:00
-# Output is redirected to PID-1's stdout so it appears in `docker logs`
-RUN printf '37 22 * * *\tcd /app && node index.ts >> /proc/1/fd/1 2>&1\n' \
-    > /etc/crontabs/root
-
-# /data is the mount point for the SQLite history DB
-# config.json must be bind-mounted at /app/config.json at runtime (never bake secrets into image)
+# /data must be a mounted directory (not a single file), so SQLite's journal
+# lives alongside the database
+ENV DB_PATH=/data/automat.sqlite \
+    PORT=3000 \
+    TZ=Europe/London
 VOLUME ["/data"]
+EXPOSE 3000
 
-# crond -f: run in foreground (keeps container alive); -d 8: log to stderr at minimum verbosity
-CMD ["crond", "-f", "-d", "8"]
+HEALTHCHECK --interval=30s --timeout=5s \
+  CMD wget -qO- --header="Host: localhost" http://127.0.0.1:3000/healthz || exit 1
+
+# TODOIST_TOKEN must be passed in at runtime (never bake secrets into the image)
+CMD ["node", "server.ts"]

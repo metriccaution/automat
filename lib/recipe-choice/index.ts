@@ -1,5 +1,6 @@
 import type { MealWithRecipes as Meal } from "../recipes/mod.ts";
 import type { RecipeIngredient } from "../data/index.ts";
+import { addDays } from "../dates.ts";
 import {
   arrayShuffle,
   suitableForFreezing,
@@ -7,7 +8,7 @@ import {
 } from "./util.ts";
 
 export function chooseAtRandom(days: number, recipes: Meal[]): Meal[] {
-  if (days === 0 || recipes.length === 0) {
+  if (days <= 0 || recipes.length === 0) {
     return [];
   }
 
@@ -25,6 +26,9 @@ export function chooseAtRandom(days: number, recipes: Meal[]): Meal[] {
   return chosen;
 }
 
+/**
+ * Apply the freezing rule to every meal it suits, then pick at random.
+ */
 export function randomWithFreezing(days: number, recipes: Meal[]): Meal[] {
   const withFreezing = recipes.map((r) =>
     suitableForFreezing(r) ? updateForFreezing(r) : r,
@@ -32,29 +36,23 @@ export function randomWithFreezing(days: number, recipes: Meal[]): Meal[] {
   return chooseAtRandom(days, withFreezing);
 }
 
-const removeTime = (date: Date): Date =>
-  new Date(date.toISOString().split("T")[0]!);
-
 /**
- * Pick the next `n` days which aren't already in use
+ * Pick the next `days` calendar dates, on or after `startAt`, which aren't
+ * already in use.
  */
 export function pickDates(
-  startAt: Date,
-  alreadyUsed: Date[],
+  startAt: string,
+  alreadyUsed: Iterable<string>,
   days: number,
-): Date[] {
-  let currentDay = removeTime(startAt);
-  const alreadyUsedDays = alreadyUsed.map((d) => removeTime(d).getTime());
-
-  const chosenDays: Date[] = [];
+): string[] {
+  const used = new Set(alreadyUsed);
+  const chosenDays: string[] = [];
+  let currentDay = startAt;
   while (chosenDays.length < days) {
-    if (!alreadyUsedDays.includes(currentDay.getTime())) {
-      chosenDays.push(new Date(currentDay));
+    if (!used.has(currentDay)) {
+      chosenDays.push(currentDay);
     }
-
-    const next = new Date(currentDay);
-    next.setUTCDate(next.getUTCDate() + 1);
-    currentDay = next;
+    currentDay = addDays(currentDay, 1);
   }
 
   return chosenDays;
@@ -62,38 +60,27 @@ export function pickDates(
 
 export interface RecipeForDay {
   title: string;
-  date: Date;
+  date: string;
   recipes: Array<{ title: string; slug: string }>;
   otherIngredients: RecipeIngredient[];
 }
 
+/**
+ * Lay meals out over the next free days, each meal taking `feeds` days.
+ */
 export function mealDates(
-  alreadyUsed: Date[],
-  days: number,
+  alreadyUsed: Iterable<string>,
+  startAt: string,
   meals: Meal[],
 ): RecipeForDay[] {
   const mealEntries = meals.flatMap((meal) =>
-    new Array(meal.feeds).fill({
+    new Array<Omit<RecipeForDay, "date">>(meal.feeds).fill({
       title: meal.name,
       recipes: meal.recipes.map((r) => ({ title: r.title, slug: r.slug })),
       otherIngredients: meal.otherIngredients,
     }),
   );
-  const dates: Date[] = pickDates(new Date(), alreadyUsed, days);
+  const dates = pickDates(startAt, alreadyUsed, mealEntries.length);
 
-  if (dates.length !== mealEntries.length) {
-    throw new Error(
-      `Mismatched dates and meal titles: ${dates.map((d) => d.toISOString()).join(", ")}, ${mealEntries.map((m: { title: string }) => m.title).join(", ")}`,
-    );
-  }
-
-  const ret: RecipeForDay[] = [];
-  for (let i = 0; i < dates.length; i++) {
-    ret.push({
-      ...mealEntries[i]!,
-      date: dates[i]!,
-    });
-  }
-
-  return ret;
+  return mealEntries.map((entry, i) => ({ ...entry, date: dates[i]! }));
 }

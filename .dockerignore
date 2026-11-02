@@ -3,3 +3,6 @@ planningHistory.sqlite
 .git
 .github
 node_modules
+data
+public/css
+docs

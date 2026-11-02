@@ -1,7 +1,14 @@
 services:
   automat:
     image: ghcr.io/metriccaution/automat:latest
-    # command: node index.ts
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      # Put TODOIST_TOKEN in a .env file next to this one
+      TODOIST_TOKEN: ${TODOIST_TOKEN:?Set TODOIST_TOKEN}
+      # Add the server's hostname or IP to use Automat from the LAN/VPN
+      ALLOWED_HOSTS: localhost,127.0.0.1
     volumes:
-      - ./config.json:/app/config.json
-      - ./planningHistory.sqlite:/app/planningHistory.sqlite
+      # A directory, not a single file: SQLite keeps its journal next to the DB
+      - ./data:/data

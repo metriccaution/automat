@@ -1,0 +1,222 @@
+// Automat's styles: GOV.UK Frontend with Automat's brand, plus a few
+// components of our own built from GOV.UK tokens.
+
+$automat-aubergine: #4c2c92;
+$automat-brass: #b58840; // decorative accent, never text
+
+@use "govuk-frontend/dist/govuk" as * with (
+  $govuk-font-family: (
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    sans-serif,
+  ),
+  $govuk-assets-path: "/public/assets/",
+  $govuk-functional-colours: (
+    brand: $automat-aubergine,
+    // v6's pale blue tint clashes with the aubergine header, so the page
+    // and footer stay white
+    template-background: (
+        name: "white",
+      ),
+    // same as `link`: no visited state
+    link-visited: (
+        name: "blue",
+        variant: "shade-10",
+      ),
+  )
+);
+
+/*
+ * Header: Service navigation (inverse) with the mark and a brass rule
+ */
+.govuk-template__header {
+  border-bottom: 4px solid $automat-brass;
+}
+
+.automat-wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: govuk-spacing(2);
+  text-decoration: none;
+
+  &:hover .automat-wordmark__text {
+    text-decoration: underline;
+  }
+}
+
+.automat-wordmark__text {
+  @include govuk-font($size: 24, $weight: bold);
+  color: inherit;
+}
+
+.automat-mark {
+  display: inline-flex;
+  flex-shrink: 0;
+  line-height: 0;
+}
+
+.automat-mark__svg {
+  width: 32px;
+  height: 32px;
+}
+
+.automat-mark--on-white {
+  color: $automat-aubergine;
+}
+
+// "Lit door": the centre window pulses while a run is in progress
+@keyframes automat-lit-door {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.35;
+  }
+}
+
+.automat-running .automat-mark__lit {
+  animation: automat-lit-door 2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .automat-running .automat-mark__lit {
+    animation: none;
+  }
+}
+
+/*
+ * Page furniture
+ */
+.automat-heading-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  column-gap: govuk-spacing(4);
+}
+
+.automat-empty {
+  padding: govuk-spacing(6) 0;
+  text-align: center;
+
+  .automat-mark {
+    margin-bottom: govuk-spacing(4);
+  }
+}
+
+.automat-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: govuk-spacing(3);
+  margin-bottom: govuk-spacing(4);
+
+  .govuk-button {
+    margin-bottom: 0;
+  }
+}
+
+.automat-run-status {
+  margin-bottom: govuk-spacing(4);
+  padding: govuk-spacing(3);
+  border-left: 5px solid govuk-functional-colour(border);
+}
+
+.automat-dispensing {
+  font-style: italic;
+}
+
+.automat-filter {
+  margin-bottom: govuk-spacing(6);
+  padding: govuk-spacing(4);
+  background-color: govuk-colour("black", $variant: "tint-95");
+
+  .govuk-form-group:last-of-type {
+    margin-bottom: govuk-spacing(4);
+  }
+
+  .govuk-button {
+    margin-bottom: 0;
+  }
+}
+
+.automat-filter__row {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: govuk-spacing(4);
+}
+
+.automat-sort-link {
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.automat-pre {
+  @include govuk-font($size: 16);
+  margin: 0;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/*
+ * "Add multiple things": repeated recipe and ingredient rows
+ */
+.automat-row {
+  margin-bottom: govuk-spacing(4);
+  padding-left: govuk-spacing(3);
+  border-left: 5px solid govuk-functional-colour(border);
+
+  .govuk-form-group {
+    margin-bottom: govuk-spacing(2);
+  }
+}
+
+.automat-row--pair {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  column-gap: govuk-spacing(4);
+}
+
+.automat-row__actions {
+  margin-bottom: 0;
+
+  .govuk-button {
+    margin-bottom: govuk-spacing(2);
+  }
+}
+
+#recipes,
+#other-ingredients {
+  margin-bottom: govuk-spacing(6);
+}
+
+/*
+ * htmx request indicators (htmx's own inline styles are turned off)
+ */
+.htmx-indicator {
+  opacity: 0;
+}
+
+.htmx-request .htmx-indicator,
+.htmx-request.htmx-indicator {
+  opacity: 1;
+  transition: opacity 200ms ease-in;
+}
+
+/*
+ * Accessible autocomplete: match GOV.UK's type
+ */
+.autocomplete__wrapper,
+.autocomplete__input,
+.autocomplete__hint,
+.autocomplete__option {
+  font-family: inherit;
+}

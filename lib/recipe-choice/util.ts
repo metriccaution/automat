@@ -11,7 +11,15 @@ export function arrayShuffle<T>(array: T[]): T[] {
   return array;
 }
 
-export const suitableForFreezing = (meal: Meal): boolean => meal.feeds >= 3;
+export const suitableForFreezing = (
+  meal: Pick<Meal, "feeds" | "freezable">,
+): boolean => meal.freezable && meal.feeds >= 3;
+
+/**
+ * How many days a meal covers once some portions are frozen.
+ */
+export const daysWithFreezing = (feeds: number): number =>
+  feeds <= 2 ? feeds : feeds <= 4 ? feeds - 1 : feeds - 2;
 
 export const updateForFreezing = (meal: Meal): Meal => {
   switch (meal.feeds) {
