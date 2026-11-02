@@ -23,7 +23,6 @@ function setup() {
     },
     services: s.services,
     recipeBook: s.recipeBook,
-    startup: { importError: null },
   });
   const mealId = createMeal(s.db, {
     name: "Bean Stew",

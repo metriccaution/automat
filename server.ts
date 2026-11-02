@@ -4,7 +4,6 @@ import { today } from "./lib/dates.ts";
 import { openDb } from "./lib/db/index.ts";
 import { failStaleRuns } from "./lib/db/runs.ts";
 import { loadEnv } from "./lib/env.ts";
-import { importMealsOnce } from "./lib/import/meals-yaml.ts";
 import { RecipeBook } from "./lib/recipes/book.ts";
 import { Scheduler } from "./lib/scheduler/index.ts";
 import { Services } from "./lib/services/index.ts";
@@ -36,21 +35,7 @@ if (stale)
   console.log(`[startup] Marked ${stale} interrupted run(s) as failed`);
 
 /*
- * 4. One-time import of the YAML meals
- */
-const startup = { importError: null as string | null };
-try {
-  const result = await importMealsOnce(db, resolve(env.MEALS_SEED_DIR));
-  if (result.status === "imported") {
-    console.log(`[startup] Imported ${result.count} meal(s) from YAML`);
-  }
-} catch (e) {
-  startup.importError = (e as Error).message;
-  console.error(`[startup] Meal import failed: ${startup.importError}`);
-}
-
-/*
- * 5. Recipe cache, refreshed in the background if it's empty or expired
+ * 4. Recipe cache, refreshed in the background if it's empty or expired
  */
 const recipeBook = new RecipeBook(db, env.RECIPES_URL);
 const runner = new Runner(db);
@@ -69,16 +54,16 @@ if (recipeBook.isExpired()) {
 }
 
 /*
- * 6. Scheduler. If the startup refresh holds the lock, a catch-up run waits
+ * 5. Scheduler. If the startup refresh holds the lock, a catch-up run waits
  * for the next tick.
  */
 const scheduler = new Scheduler(db, () => services.plan("schedule"));
 scheduler.start();
 
 /*
- * 7. HTTP
+ * 6. HTTP
  */
-const app = createApp({ db, env, services, recipeBook, startup });
+const app = createApp({ db, env, services, recipeBook });
 const server = serve({ fetch: app.fetch, port: env.PORT, hostname: "0.0.0.0" });
 console.log(`[startup] Listening on http://0.0.0.0:${env.PORT}`);
 

@@ -11,7 +11,6 @@ const envSchema = z.object({
   RECIPES_URL: z
     .url()
     .default("https://metriccaution.github.io/recipe-book/repo.json"),
-  MEALS_SEED_DIR: z.string().min(1).default("./meals"),
   ALLOWED_HOSTS: z
     .string()
     .default("localhost,127.0.0.1")

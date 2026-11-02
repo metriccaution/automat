@@ -15,10 +15,10 @@ export const settingsSchema = z.object({
 export type Settings = z.infer<typeof settingsSchema>;
 
 /**
- * Internal keys, never shown on the settings form.
+ * Keys outside the schema are ignored. That includes `mealsImportedAt`, left
+ * by the retired YAML import: keep it, so an old image can't import the YAML
+ * again into a database that has moved on.
  */
-export type InternalKey = "mealsImportedAt";
-
 export function getSettings(db: DatabaseSync): Settings {
   const rows = db.prepare("SELECT key, value FROM settings").all() as Array<{
     key: string;
@@ -46,20 +46,4 @@ export function saveSettings(db: DatabaseSync, values: Partial<Settings>) {
   for (const [key, value] of Object.entries(values)) {
     if (value !== undefined) upsert.run(key, JSON.stringify(value));
   }
-}
-
-export function getInternal(
-  db: DatabaseSync,
-  key: InternalKey,
-): string | undefined {
-  const row = db
-    .prepare("SELECT value FROM settings WHERE key = ?")
-    .get(key) as { value: string } | undefined;
-  return row ? (JSON.parse(row.value) as string) : undefined;
-}
-
-export function setInternal(db: DatabaseSync, key: InternalKey, value: string) {
-  db.prepare(
-    "INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value",
-  ).run(key, JSON.stringify(value));
 }

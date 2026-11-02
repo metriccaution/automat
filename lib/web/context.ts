@@ -23,10 +23,6 @@ export interface AppDeps {
   >;
   services: Services;
   recipeBook: RecipeBook;
-  /**
-   * Problems found at startup that should be shown on every page.
-   */
-  startup: { importError: string | null };
 }
 
 export type AppEnv = {
@@ -73,21 +69,9 @@ export function takeFlash(c: Context): Flash | null {
  * The single important banner, in priority order.
  */
 export function importantBanner(deps: AppDeps): Html | null {
-  const { db, recipeBook, startup } = deps;
+  const { db, recipeBook } = deps;
   const banner = (content: Html) =>
     notificationBanner({ type: "important", content });
-
-  if (startup.importError) {
-    return banner(
-      html`<p class="govuk-notification-banner__heading">
-          The meals couldn’t be imported from the YAML files
-        </p>
-        <p class="govuk-body">${startup.importError}</p>
-        <p class="govuk-body">
-          Fix the file and restart Automat to try again.
-        </p>`,
-    );
-  }
 
   const scheduled = latestRun(db, { trigger: "schedule" });
   if (scheduled?.status === "failed") {

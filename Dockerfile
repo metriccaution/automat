@@ -21,8 +21,6 @@ COPY server.ts tsconfig.json ./
 COPY lib/ ./lib/
 COPY public/ ./public/
 COPY --from=build /app/public/css/ ./public/css/
-# Seed for the one-time import into the database (removed in Phase 5)
-COPY meals/ ./meals/
 
 # /data must be a mounted directory (not a single file), so SQLite's journal
 # lives alongside the database

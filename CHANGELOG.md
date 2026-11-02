@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Web app: run planning, cleanup and recipe refreshes on demand, pause the
   scheduler, edit meals, push a meal to Todoist, and see history and stats
 - Meals, history, runs, settings and the recipe cache stored in one SQLite
-  database, with a one-time import of the YAML meals
+  database
 - Per-meal "enabled" and "freezable" flags
 
 ### Changed
@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - The `npm run plan` CLI, `config.json` and the `add-singles` command
+- The `meals/` YAML files, now that they've been imported into the database
 - Migrated from Airtable to a local file (not currently included)
 - Custom Todiost client
 

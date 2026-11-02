@@ -40,8 +40,8 @@ docker compose up -d
 Then open <http://localhost:3000>. To use it from other devices, add the
 server's hostname or IP to `ALLOWED_HOSTS` in `docker-compose.yml`.
 
-The database lives in `./data`. **Back this directory up**: once the meals are
-in the database, it's the only copy of them.
+The database lives in `./data`. **Back this directory up**: it's the only copy
+of your meals. A fresh install starts with an empty meals list.
 
 ### Locally
 
@@ -57,31 +57,17 @@ TODOIST_TOKEN=abc123 npm start
 
 All configuration is through environment variables:
 
-| Variable         | Default                                                 | Notes                                                      |
-| ---------------- | ------------------------------------------------------- | ---------------------------------------------------------- |
-| `TODOIST_TOKEN`  | **required**                                            |                                                            |
-| `DB_PATH`        | `./data/automat.sqlite`                                 | Must be in a mounted directory, not a single-file mount    |
-| `PORT`           | `3000`                                                  |                                                            |
-| `TZ`             | `Europe/London`                                         | All calendar dates and the schedule use this               |
-| `RECIPES_URL`    | `https://metriccaution.github.io/recipe-book/repo.json` |                                                            |
-| `MEALS_SEED_DIR` | `./meals`                                               | YAML meals imported once, on first start                   |
-| `ALLOWED_HOSTS`  | `localhost,127.0.0.1`                                   | Comma-separated hostnames or IPs Automat can be reached at |
+| Variable        | Default                                                 | Notes                                                      |
+| --------------- | ------------------------------------------------------- | ---------------------------------------------------------- |
+| `TODOIST_TOKEN` | **required**                                            |                                                            |
+| `DB_PATH`       | `./data/automat.sqlite`                                 | Must be in a mounted directory, not a single-file mount    |
+| `PORT`          | `3000`                                                  |                                                            |
+| `TZ`            | `Europe/London`                                         | All calendar dates and the schedule use this               |
+| `RECIPES_URL`   | `https://metriccaution.github.io/recipe-book/repo.json` |                                                            |
+| `ALLOWED_HOSTS` | `localhost,127.0.0.1`                                   | Comma-separated hostnames or IPs Automat can be reached at |
 
 Everything else (schedule time, days to plan, freezing, the history window) is
 on the Settings page.
-
-### Upgrading from the CLI
-
-The old `config.json` and cron job are gone. To keep your planning history:
-
-1. Move `planningHistory.sqlite` into the data directory as `automat.sqlite`
-   (or point `DB_PATH` at it). Automat adopts the existing history.
-2. Set `TODOIST_TOKEN` from the token in your old `config.json`.
-3. Change any single-file volume mount to a directory mount (see
-   `docker-compose.yml`).
-
-On first start, the meals in `meals/*.yaml` are imported into the database.
-From then on, edit meals in the web app; the YAML files aren't read again.
 
 ## Developing
 
