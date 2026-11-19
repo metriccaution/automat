@@ -5,7 +5,7 @@
     "": {
       "name": "automat",
       "dependencies": {
-        "@doist/todoist-sdk": "^15.13.1",
+        "@doist/todoist-sdk": "^17.0.1",
         "smol-toml": "^1.9.1",
         "zod": "^4.6.7",
       },
@@ -21,7 +21,7 @@
   "packages": {
     "@doist/sdk-kmp": ["@doist/sdk-kmp@0.6.0", "", {}, "sha512-YgnsXxgrdaIvNC8iL9yDB3Vv/zNYTfVE8jB+PB1KXUunEeJHQORhE6IJfLj7X2RRuR83U47a8trVAc4IU7PoBw=="],
 
-    "@doist/todoist-sdk": ["@doist/todoist-sdk@15.13.1", "", { "dependencies": { "@doist/sdk-kmp": "0.6.0", "camelcase": "6.3.0", "emoji-regex": "10.6.0", "ts-custom-error": "^3.2.0", "undici": "^7.29.0", "uuid": "11.1.1", "zod": "4.6.6" }, "peerDependencies": { "type-fest": "^4.12.0 || ^5.5.0" } }, "sha512-oJaz9f2KqqA1B4PJdUVkKmIo2UnLJuKnvQAA/pbLOnEvO3LrewJzRAMImMnnYFJBAgFjLPuEj7VVKYWUOfhnvQ=="],
+    "@doist/todoist-sdk": ["@doist/todoist-sdk@17.0.1", "", { "dependencies": { "@doist/sdk-kmp": "0.6.0", "camelcase": "6.3.0", "emoji-regex": "10.6.0", "ts-custom-error": "^3.2.0", "undici": "^7.29.0", "uuid": "11.1.1", "zod": "4.6.6" }, "peerDependencies": { "type-fest": "^4.12.0 || ^5.5.0" } }, "sha512-TyGsKXBIHnWbIQqab/Jku/aeaEbhzFDb9NIPBK/pg9uX5y5g/Z0+c7xlHhxZ/TtfO1mb9Y2mk4MUBAcZHS9WOg=="],
 
     "@types/bun": ["@types/bun@1.4.4", "", { "dependencies": { "bun-types": "1.4.4" } }, "sha512-9wkRDXUXK124pEnAutE6n/l18j+i9GC5IAHK8TmX/2nlySETmky0OU6yL5U8pW1AoKh++AN9auDCr647BfurjQ=="],
 
